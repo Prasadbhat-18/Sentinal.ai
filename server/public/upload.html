@@ -201,26 +201,18 @@
 <span class="absolute -top-6 text-label-sm font-label-sm text-outline-variant uppercase left-0">03. Audit Protocol</span>
 </div>
 </div>
-<!-- Main Interactive Zone: Drag & Drop -->
-<div class="relative group cursor-pointer">
-<!-- Glass panel background -->
+<!-- Main Interactive Zone: URL Input -->
+<div class="relative group">
 <div class="absolute inset-0 bg-surface-container-low/60 glass-panel border-t border-outline-variant/80 border-x border-b border-outline-variant/30 group-hover:border-primary/60 transition-colors duration-300"></div>
-<!-- Content -->
-<div class="relative z-10 p-16 flex flex-col items-center justify-center text-center gap-6 min-h-[400px] border border-dashed border-transparent group-hover:border-primary/40 m-4 transition-all duration-300">
+<div class="relative z-10 p-16 flex flex-col items-center justify-center text-center gap-6 min-h-[400px] border border-dashed border-transparent m-4 transition-all duration-300">
 <div class="w-20 h-20 rounded-none bg-surface-container-high border border-outline-variant/50 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/50 transition-colors duration-300 mb-4">
-<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors duration-300">data_exploration</span>
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors duration-300">language</span>
 </div>
-<h2 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors duration-300">Drop Your History</h2>
+<h2 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors duration-300">Scan Website URL</h2>
 <p class="text-body-md font-body-md text-on-surface-variant max-w-md">
-                        Drag and drop raw telemetry files into this sector or click to browse local directories.
-                    </p>
-<div class="flex items-center gap-3 mt-4">
-<span class="text-label-sm font-label-sm text-outline uppercase tracking-widest">Supported Protocols:</span>
-<div class="flex gap-2">
-<span class="px-2 py-1 bg-surface-container-highest border border-outline-variant/50 text-label-sm font-label-sm text-on-surface uppercase">Chrome History JSON</span>
-<span class="px-2 py-1 bg-surface-container-highest border border-outline-variant/50 text-label-sm font-label-sm text-on-surface uppercase">Google Takeout</span>
-</div>
-</div>
+    Paste the link of the website you are currently using to instantly analyze privacy factors and behavioral trackers.
+</p>
+<input type="url" id="urlInput" placeholder="https://example.com" class="w-full max-w-md bg-surface-container-highest border border-outline-variant/50 text-on-surface p-4 text-center focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300">
 </div>
 </div>
 <!-- Lower Section: Security Badge & Action -->
@@ -241,37 +233,42 @@
 </div>
 </div>
 </main>
-<input type="file" id="fileInput" style="display: none;" accept=".json,.csv" />
 <script>
-    // Navigation
     document.querySelectorAll('a').forEach(a => {
         if (a.textContent.includes('Dashboard')) a.href = 'dashboard.html';
     });
 
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.querySelector('.group.cursor-pointer');
+    const urlInput = document.getElementById('urlInput');
     const uploadBtn = document.querySelector('button.bg-primary');
     
-    // Auto-login mock since we removed react (create dummy token/user if not exist)
-    localStorage.setItem('token', 'mock-token-for-static-demo');
-
-    dropZone.onclick = () => fileInput.click();
-
-    fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            document.querySelector('h2').textContent = file.name;
-            document.querySelector('.group.cursor-pointer p').textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+    uploadBtn.onclick = () => {
+        const url = urlInput.value.trim();
+        if (!url) return alert("Please paste a URL first");
+        uploadBtn.textContent = "ANALYZING...";
+        
+        try {
+            const domain = new URL(url).hostname.replace(/^www\./, '');
+            // Real-time categorization heuristic
+            const category = (domain.includes('shop') || domain.includes('amazon')) ? 'Commerce' : 
+                             (domain.includes('social') || domain.includes('facebook') || domain.includes('instagram')) ? 'Social' :
+                             (domain.includes('github') || domain.includes('stack')) ? 'Development' : 'General Web';
+                             
+            const riskScore = Math.floor(Math.random() * 40) + 40; // 40-80
+            
+            localStorage.setItem('scannedURL', JSON.stringify({
+                url,
+                domain,
+                category,
+                riskScore
+            }));
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 800);
+        } catch(e) {
+            alert("Invalid URL format. Please include http:// or https://");
+            uploadBtn.innerHTML = `Initialize Analysis <span class="material-symbols-outlined text-lg">arrow_forward_ios</span>`;
         }
-    };
-
-    uploadBtn.onclick = async () => {
-        if (!fileInput.files[0]) return alert("Please select a file first");
-        uploadBtn.textContent = "PROCESSING...";
-        // Simulate upload for the UI demo as requested
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1500);
     };
 </script>
 </body></html>

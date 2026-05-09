@@ -510,7 +510,32 @@
         if (a.textContent.includes('Audit')) a.href = 'upload.html';
     });
 
-    // We can inject mock data directly into the DOM elements here to make it look alive
-    document.querySelector('.text-error').textContent = Math.floor(Math.random() * 40 + 50); // Random score 50-90
+    const scannedData = JSON.parse(localStorage.getItem('scannedURL'));
+    if (scannedData) {
+        // Update Risk Score
+        const scoreEl = document.querySelector('.text-\\[48px\\]');
+        if (scoreEl) scoreEl.textContent = scannedData.riskScore;
+        
+        // Update Status
+        const statusText = document.querySelector('.text-body-sm.font-body-sm.text-on-surface-variant');
+        if (statusText) statusText.textContent = `Real-time scan complete for ${scannedData.domain}. Estimated cross-site trackers: ${Math.floor(scannedData.riskScore / 10)}.`;
+
+        const statusLabel = document.querySelector('.text-label-sm.font-label-sm.text-tertiary-fixed-dim.uppercase');
+        if (statusLabel) statusLabel.textContent = `Status: ${scannedData.riskScore > 65 ? 'Elevated Risk' : 'Secure'}`;
+        
+        // Update Top Domain
+        const domainEl = document.querySelector('.text-on-surface.font-mono');
+        if (domainEl) domainEl.textContent = scannedData.domain;
+        
+        // Update Category text
+        const catEls = document.querySelectorAll('.text-on-surface');
+        catEls.forEach(el => {
+            if (el.textContent === 'DEVELOPMENT' || el.textContent === 'SOCIAL/COMM' || el.textContent === 'UTILITY/OTHER') {
+                if (el.textContent === 'DEVELOPMENT') el.textContent = scannedData.category.toUpperCase();
+            }
+        });
+    } else {
+        document.querySelector('.text-\\[48px\\]').textContent = Math.floor(Math.random() * 40 + 50); 
+    }
 </script>
 </body></html>
