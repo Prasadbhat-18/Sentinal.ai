@@ -12,7 +12,7 @@ import analyticsRoutes from './routes/analyticsRoutes.js';
 dotenv.config();
 
 // Connect to database
-// connectDB(); // Disabled temporarily to allow server to run without MongoDB
+connectDB().catch(err => console.log('Running in memory-only mode due to DB connection failure'));
 
 const app = express();
 

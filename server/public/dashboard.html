@@ -224,7 +224,7 @@
 <ul class="flex-1 px-4 space-y-2">
 <!-- Active Tab -->
 <li>
-<a class="flex items-center gap-3 px-4 py-3 rounded text-on-primary-container dark:text-on-primary-container bg-primary-container/20 border-l-4 border-primary font-bold scale-95 active:scale-90 transition-transform" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-primary-container dark:text-on-primary-container bg-primary-container/20 border-l-4 border-primary font-bold scale-95 active:scale-90 transition-transform" href="dashboard.html">
 <span class="material-symbols-outlined">grid_view</span>
 <span class="text-label-md font-label-md uppercase tracking-wider">Dashboard</span>
 </a>
@@ -237,13 +237,13 @@
 </a>
 </li>
 <li>
-<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="upload.html">
 <span class="material-symbols-outlined">security</span>
 <span class="text-label-md font-label-md uppercase tracking-wider">Audit</span>
 </a>
 </li>
 <li>
-<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="upload.html">
 <span class="material-symbols-outlined">database</span>
 <span class="text-label-md font-label-md uppercase tracking-wider">History</span>
 </a>
@@ -256,7 +256,7 @@
 </li>
 </ul>
 <div class="px-6 mt-auto">
-<button class="w-full py-3 bg-transparent border border-primary text-primary text-label-md font-label-md uppercase tracking-wider hover:bg-primary/10 transition-colors shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+<button onclick="window.location.href='upload.html'" class="w-full py-3 bg-transparent border border-primary text-primary text-label-md font-label-md uppercase tracking-wider hover:bg-primary/10 transition-colors shadow-[0_0_10px_rgba(0,240,255,0.2)]">
                 INJECT DATA
             </button>
 </div>
@@ -273,7 +273,46 @@
 <span class="text-secondary-container">LIVE STREAM</span>
 </div>
 </div>
+<div class="mb-10 max-w-4xl">
+    <div class="relative group w-full">
+        <div class="absolute -inset-1 bg-gradient-to-r from-primary/50 to-tertiary-container/30 blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+        <div class="relative flex items-stretch bg-surface-container-low/60 backdrop-blur-md border border-outline-variant/30 focus-within:border-primary/50 transition-colors">
+            <div class="flex items-center pl-4 text-outline group-focus-within:text-primary">
+                <span class="material-symbols-outlined">link</span>
+            </div>
+            <input id="urlInput" type="text" placeholder="SECURE URL SCAN: INPUT DOMAIN TO ANALYZE..." class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-label-md py-4 px-4 placeholder:text-outline/40 uppercase tracking-widest text-sm"/>
+            <button id="scanUrlBtn" class="bg-primary/10 text-primary font-label-md text-label-md px-8 py-4 border-l border-outline-variant/30 hover:bg-primary hover:text-on-primary transition-all uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                <span>Initiate Scan</span>
+                <span class="material-symbols-outlined text-sm">radar</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Dashboard Grid -->
+<div id="scanReport" class="hidden glass-panel rounded-DEFAULT p-6 mb-8 border-l-4 border-primary shadow-[0_0_20px_rgba(0,240,255,0.1)]">
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h2 class="text-headline-md font-headline-md text-primary uppercase">Scan Report: <span id="scanDomain">domain.com</span></h2>
+            <p id="scanSummary" class="text-body-md text-on-surface-variant mt-2 max-w-3xl"></p>
+        </div>
+        <div class="text-right">
+            <div class="text-label-sm font-label-sm text-outline uppercase">Threat Level</div>
+            <div id="scanScore" class="text-headline-lg font-headline-lg text-primary">00</div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+            <h3 class="text-label-md font-label-md text-primary uppercase mb-4 border-b border-outline-variant/30 pb-2">Active Threats</h3>
+            <ul id="threatList" class="space-y-3"></ul>
+        </div>
+        <div>
+            <h3 class="text-label-md font-label-md text-tertiary-container uppercase mb-4 border-b border-outline-variant/30 pb-2">Identified Leaks</h3>
+            <ul id="leakList" class="space-y-3"></ul>
+        </div>
+    </div>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 <!-- Top Row: Radar & Risk Score -->
 <!-- Left: Behavioral Fingerprint Radar Chart (Col span 8 on lg) -->
@@ -358,56 +397,7 @@
 <span class="text-outline">VOL</span>
 </h3>
 <div class="flex-1 flex flex-col justify-between gap-4">
-<!-- Bar 1 -->
-<div>
-<div class="flex justify-between text-label-sm font-label-sm mb-1">
-<span class="text-on-surface font-mono">github.com</span>
-<span class="text-primary-container">142</span>
-</div>
-<div class="h-2 w-full bg-surface-container-highest">
-<div class="h-full bg-primary-container w-[85%] shadow-[0_0_5px_rgba(0,240,255,0.5)]"></div>
-</div>
-</div>
-<!-- Bar 2 -->
-<div>
-<div class="flex justify-between text-label-sm font-label-sm mb-1">
-<span class="text-on-surface font-mono">stackoverflow.com</span>
-<span class="text-primary-container">98</span>
-</div>
-<div class="h-2 w-full bg-surface-container-highest">
-<div class="h-full bg-primary-container/80 w-[60%]"></div>
-</div>
-</div>
-<!-- Bar 3 -->
-<div>
-<div class="flex justify-between text-label-sm font-label-sm mb-1">
-<span class="text-on-surface font-mono">aws.amazon.com</span>
-<span class="text-primary-container">76</span>
-</div>
-<div class="h-2 w-full bg-surface-container-highest">
-<div class="h-full bg-primary-container/60 w-[45%]"></div>
-</div>
-</div>
-<!-- Bar 4 -->
-<div>
-<div class="flex justify-between text-label-sm font-label-sm mb-1">
-<span class="text-on-surface font-mono">news.ycombinator.com</span>
-<span class="text-primary-container">45</span>
-</div>
-<div class="h-2 w-full bg-surface-container-highest">
-<div class="h-full bg-primary-container/40 w-[25%]"></div>
-</div>
-</div>
-<!-- Bar 5 -->
-<div>
-<div class="flex justify-between text-label-sm font-label-sm mb-1">
-<span class="text-on-surface font-mono">mail.google.com</span>
-<span class="text-primary-container">31</span>
-</div>
-<div class="h-2 w-full bg-surface-container-highest">
-<div class="h-full bg-primary-container/20 w-[15%]"></div>
-</div>
-</div>
+<!-- Bars populated by script -->
 </div>
 </div>
 <!-- Bottom Middle: Activity Heatmap (Col span 4) -->
@@ -418,35 +408,8 @@
 </h3>
 <div class="flex-1 flex items-center justify-center">
 <!-- Conceptual Heatmap Grid -->
-<div class="grid grid-cols-6 gap-1 w-full">
-<!-- Row 1 -->
-<div class="aspect-square bg-primary-container/10 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
-<div class="aspect-square bg-primary-container/5 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
-<div class="aspect-square bg-primary-container/40 heatmap-cell hover:bg-primary-container/60 transition-colors"></div>
-<!-- Row 2 -->
-<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
-<div class="aspect-square bg-primary-container/10 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-primary-container/60 heatmap-cell hover:bg-primary-container/80 transition-colors border-primary-container/50"></div>
-<div class="aspect-square bg-primary-container/80 heatmap-cell hover:bg-primary-container shadow-[0_0_8px_rgba(0,240,255,0.4)] border-primary-container"></div>
-<!-- Row 3 -->
-<div class="aspect-square bg-primary-container/5 heatmap-cell hover:bg-primary-container/20 transition-colors"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-primary-container/10 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
-<div class="aspect-square bg-primary-container/40 heatmap-cell hover:bg-primary-container/60 transition-colors"></div>
-<div class="aspect-square bg-primary-container/60 heatmap-cell hover:bg-primary-container/80 transition-colors"></div>
-<!-- Row 4 -->
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
-<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
-<div class="aspect-square bg-primary-container/30 heatmap-cell hover:bg-primary-container/50 transition-colors"></div>
-<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
+<div class="grid grid-cols-6 gap-1 w-full heatmap-grid">
+<!-- Cells populated by script -->
 </div>
 </div>
 <div class="mt-4 flex justify-between text-label-sm font-label-sm text-outline">
@@ -477,27 +440,8 @@
 </div>
 </div>
 <!-- Legend -->
-<div class="flex-1 flex flex-col gap-3">
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-2 text-label-sm font-label-sm">
-<span class="w-3 h-3 bg-primary-container border border-primary"></span>
-<span class="text-on-surface">DEVELOPMENT</span>
-</div>
-<span class="text-primary-container font-mono text-label-sm">45%</span>
-</div>
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-2 text-label-sm font-label-sm">
-<span class="w-3 h-3 bg-tertiary-fixed-dim border border-tertiary"></span>
-<span class="text-on-surface">SOCIAL/COMM</span>
-</div>
-<span class="text-tertiary-fixed-dim font-mono text-label-sm">35%</span>
-</div>
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-2 text-label-sm font-label-sm">
-<span class="w-3 h-3 bg-outline-variant border border-outline"></span>
-<span class="text-on-surface">UTILITY/OTHER</span>
-</div>
-<span class="text-outline font-mono text-label-sm">20%</span>
+<div class="flex-1 flex flex-col gap-3 category-legend">
+<!-- Items populated by script -->
 </div>
 </div>
 </div>
@@ -512,18 +456,9 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // ===== NAVIGATION =====
-    document.querySelectorAll('a').forEach(a => {
-        if (a.textContent.trim() === 'Dashboard') a.href = 'dashboard.html';
-        if (a.textContent.trim() === 'Audit') a.href = 'upload.html';
-        if (a.textContent.trim() === 'History') a.href = 'upload.html';
-    });
-    document.querySelectorAll('button').forEach(btn => {
-        if (btn.textContent.includes('INJECT DATA')) btn.onclick = () => window.location.href = 'upload.html';
-    });
-
-    // ===== HELPER: Animate a number counting up =====
+    // ===== NAVIGATION & HELPERS =====
     function animateValue(el, start, end, duration) {
+        if (!el) return;
         const range = end - start;
         const startTime = performance.now();
         function update(currentTime) {
@@ -535,179 +470,154 @@
         requestAnimationFrame(update);
     }
 
-    // ===== FETCH RISK SCORE + RADAR =====
-    fetch('/api/analytics/risk-score').then(r => r.json()).then(data => {
-        // Update score with count-up animation
-        const scoreEl = document.querySelector('.text-\\[48px\\]');
-        if (scoreEl && data.score) animateValue(scoreEl, 0, data.score, 1500);
+    // ===== SCANNER LOGIC =====
+    const urlInput = document.getElementById('urlInput');
+    const scanUrlBtn = document.getElementById('scanUrlBtn');
 
-        // Update gauge SVG arc
-        const gaugeCircle = document.querySelectorAll('circle')[3]; // score track circle
-        if (gaugeCircle && data.score) {
-            const circumference = 283;
-            const offset = circumference - (circumference * data.score / 100);
-            gaugeCircle.setAttribute('stroke-dashoffset', offset);
-        }
-
-        // Update status text
-        const statusLabel = document.querySelector('.text-label-sm.font-label-sm.text-tertiary-fixed-dim.uppercase.tracking-wider.mb-1');
-        if (statusLabel) statusLabel.textContent = `Status: ${data.score > 65 ? 'ELEVATED' : data.score > 40 ? 'MODERATE' : 'SECURE'}`;
-
-        const statusBody = statusLabel?.parentElement?.querySelector('.text-body-sm');
-        if (statusBody && data.domain) {
-            statusBody.textContent = `Analysis for ${data.domain}: ${data.score > 65 ? 'High tracker density detected.' : data.score > 40 ? 'Moderate data collection detected.' : 'Minimal tracking observed.'}`;
-        }
-
-        // Update source badge
-        const sourceBadge = document.querySelector('.text-outline');
-        if (sourceBadge && data.domain && sourceBadge.closest('.hidden.md\\:flex')) {
-            sourceBadge.closest('.hidden.md\\:flex').innerHTML = `<span class="material-symbols-outlined text-[14px] mr-2 text-primary-container">language</span>Source: ${data.domain}`;
-        }
-
-        // Update radar chart polygon
-        if (data.radar && data.radar.length >= 6) {
-            const polygon = document.querySelector('polygon');
-            const radarLabels = document.querySelectorAll('.radar-grid .absolute');
-            if (polygon) {
-                // Map radar values (0-100) to SVG polygon points
-                const cx = 50, cy = 50, maxR = 40;
-                const points = data.radar.map((r, i) => {
-                    const angle = (Math.PI * 2 * i / data.radar.length) - Math.PI / 2;
-                    const radius = (r.value / 100) * maxR;
-                    return `${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`;
+    if (scanUrlBtn) {
+        scanUrlBtn.onclick = async () => {
+            const url = urlInput.value.trim();
+            if (!url) return alert("Please enter a URL");
+            
+            const originalContent = scanUrlBtn.innerHTML;
+            scanUrlBtn.innerHTML = '<span>Scanning...</span>';
+            scanUrlBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/analytics/scan-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
                 });
-                polygon.setAttribute('points', points.join(' '));
-
-                // Update data point circles
-                const circles = polygon.parentElement.querySelectorAll('circle');
-                data.radar.forEach((r, i) => {
-                    const angle = (Math.PI * 2 * i / data.radar.length) - Math.PI / 2;
-                    const radius = (r.value / 100) * maxR;
-                    if (circles[i]) {
-                        circles[i].setAttribute('cx', cx + radius * Math.cos(angle));
-                        circles[i].setAttribute('cy', cy + radius * Math.sin(angle));
-                    }
-                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayScanReport(data);
+                    urlInput.value = '';
+                } else {
+                    alert("Scan failed. Please check the URL.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error connecting to server");
+            } finally {
+                scanUrlBtn.innerHTML = originalContent;
+                scanUrlBtn.disabled = false;
             }
-            // Update radar labels
-            const labelEls = document.querySelectorAll('.radar-grid > .absolute');
-            const labelNames = data.radar.map(r => r.axis.toUpperCase());
-            if (labelEls.length >= 4 && labelNames.length >= 4) {
-                labelEls[0].textContent = labelNames[0] || 'TRACKERS';
-                labelEls[1].textContent = labelNames[3] || 'DATA';
-                labelEls[2].textContent = labelNames[4] || 'PRIVACY';
-                labelEls[3].textContent = labelNames[1] || 'SOCIAL';
-            }
-        }
-    }).catch(e => console.log('Risk score API:', e));
+        };
+    }
 
-    // ===== FETCH TOP SITES =====
-    fetch('/api/analytics/top-sites').then(r => r.json()).then(data => {
-        const container = document.querySelector('.flex-1.flex.flex-col.justify-between.gap-4');
-        if (!container || !data.length) return;
-        container.innerHTML = '';
+    function displayScanReport(data) {
+        const report = document.getElementById('scanReport');
+        report.classList.remove('hidden');
+        document.getElementById('scanDomain').textContent = data.domain;
+        document.getElementById('scanSummary').textContent = data.summary;
+        document.getElementById('scanScore').textContent = data.threatScore;
+        
+        document.getElementById('threatList').innerHTML = data.threats.map(t => `
+            <li class="flex items-center justify-between bg-surface-container/50 p-3 border border-outline-variant/30">
+                <span class="text-on-surface font-label-sm uppercase tracking-wider">${t.type}</span>
+                <span class="px-2 py-0.5 ${t.risk === 'HIGH' ? 'bg-error/20 text-error border-error/50' : 'bg-primary/20 text-primary border-primary/50'} border text-[10px] font-bold">${t.risk}</span>
+            </li>
+        `).join('');
 
-        const maxCount = Math.max(...data.map(d => d.count));
-        data.slice(0, 5).forEach((site, i) => {
-            const pct = Math.max((site.count / maxCount) * 100, 8);
-            const opacities = ['', '/80', '/60', '/40', '/20'];
-            const glow = i === 0 ? 'shadow-[0_0_5px_rgba(0,240,255,0.5)]' : '';
-            container.innerHTML += `
-                <div>
-                    <div class="flex justify-between text-label-sm font-label-sm mb-1">
-                        <span class="text-on-surface font-mono truncate mr-2" title="${site.domain}">${site.domain}</span>
-                        <span class="text-primary-container">${site.count}</span>
-                    </div>
-                    <div class="h-2 w-full bg-surface-container-highest">
-                        <div class="h-full bg-primary-container${opacities[i] || ''} ${glow}" style="width:${pct}%;transition:width 1s ease"></div>
-                    </div>
+        document.getElementById('leakList').innerHTML = data.leaks.map(l => `
+            <li class="flex flex-col bg-surface-container/50 p-3 border border-outline-variant/30">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-tertiary-container font-label-sm uppercase tracking-wider">${l.site}</span>
+                    <span class="text-outline text-[10px]">${l.date}</span>
                 </div>
-            `;
-        });
-        // Animate bars in
-        setTimeout(() => {
-            container.querySelectorAll('.h-full').forEach(bar => bar.style.width = bar.style.width);
-        }, 100);
-    }).catch(e => console.log('Top sites API:', e));
+                <span class="text-on-surface-variant text-body-sm italic">Leaked: ${l.data}</span>
+            </li>
+        `).join('');
+        
+        report.scrollIntoView({ behavior: 'smooth' });
+    }
 
-    // ===== FETCH HEATMAP =====
-    fetch('/api/analytics/hourly-heatmap').then(r => r.json()).then(data => {
-        const heatmapGrid = document.querySelector('.grid.grid-cols-6.gap-1');
-        if (!heatmapGrid) return;
-        heatmapGrid.innerHTML = '';
-
-        const maxCount = Math.max(...data.map(d => d.count), 1);
-        data.forEach(hourData => {
-            const intensity = hourData.count / maxCount;
-            let bgClass = 'bg-surface-container-highest';
-            let hoverClass = '';
-            let extraStyle = '';
-
-            if (intensity > 0.8) { bgClass = 'bg-primary-container/80'; hoverClass = 'hover:bg-primary-container'; extraStyle = 'box-shadow:0 0 8px rgba(0,240,255,0.4)'; }
-            else if (intensity > 0.6) { bgClass = 'bg-primary-container/60'; hoverClass = 'hover:bg-primary-container/80'; }
-            else if (intensity > 0.4) { bgClass = 'bg-primary-container/40'; hoverClass = 'hover:bg-primary-container/60'; }
-            else if (intensity > 0.2) { bgClass = 'bg-primary-container/20'; hoverClass = 'hover:bg-primary-container/40'; }
-            else if (intensity > 0.05) { bgClass = 'bg-primary-container/10'; hoverClass = 'hover:bg-primary-container/30'; }
-
-            heatmapGrid.innerHTML += `<div class="aspect-square ${bgClass} heatmap-cell ${hoverClass} transition-colors" title="Hour ${hourData.hour}: ${hourData.count} visits" style="${extraStyle}"></div>`;
-        });
-    }).catch(e => console.log('Heatmap API:', e));
-
-    // ===== FETCH CATEGORY BREAKDOWN =====
-    fetch('/api/analytics/category-breakdown').then(r => r.json()).then(data => {
-        if (!data.length) return;
-        const total = data.reduce((s, c) => s + c.count, 0);
-        const colors = ['#00f0ff', '#ebb2ff', '#3b494b', '#79ff5b', '#e3e1e9', '#ffb4ab'];
-        const colorNames = [
-            { bg: 'bg-primary-container', border: 'border-primary', text: 'text-primary-container' },
-            { bg: 'bg-tertiary-fixed-dim', border: 'border-tertiary', text: 'text-tertiary-fixed-dim' },
-            { bg: 'bg-outline-variant', border: 'border-outline', text: 'text-outline' },
-            { bg: 'bg-secondary-fixed', border: 'border-secondary', text: 'text-secondary-fixed' },
-            { bg: 'bg-on-surface', border: 'border-on-surface-variant', text: 'text-on-surface' }
-        ];
-
-        // Update SVG donut
-        const donutSvg = document.querySelector('.glass-panel:last-child svg');
-        if (donutSvg) {
-            donutSvg.innerHTML = '';
-            let cumulativeOffset = 0;
-            const circumference = 2 * Math.PI * 40; // r=40
-            data.slice(0, 5).forEach((cat, i) => {
-                const pct = cat.count / total;
-                const dashLength = circumference * pct;
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', '50');
-                circle.setAttribute('cy', '50');
-                circle.setAttribute('r', '40');
-                circle.setAttribute('fill', 'none');
-                circle.setAttribute('stroke', colors[i] || '#3b494b');
-                circle.setAttribute('stroke-width', '12');
-                circle.setAttribute('stroke-dasharray', `${dashLength} ${circumference - dashLength}`);
-                circle.setAttribute('stroke-dashoffset', `-${cumulativeOffset}`);
-                circle.style.transformOrigin = 'center';
-                donutSvg.appendChild(circle);
-                cumulativeOffset += dashLength;
-            });
+    // ===== DATA LOADING =====
+    async function loadDashboardData() {
+        const lastScan = localStorage.getItem('lastScanResult');
+        if (lastScan) {
+            displayScanReport(JSON.parse(lastScan));
+            localStorage.removeItem('lastScanResult');
         }
 
-        // Update legend
-        const legendContainer = donutSvg?.closest('.flex-1.flex.items-center')?.querySelector('.flex-1.flex.flex-col.gap-3');
-        if (legendContainer) {
-            legendContainer.innerHTML = '';
-            data.slice(0, 3).forEach((cat, i) => {
-                const pct = Math.round((cat.count / total) * 100);
-                const cn = colorNames[i] || colorNames[2];
-                legendContainer.innerHTML += `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2 text-label-sm font-label-sm">
-                            <span class="w-3 h-3 ${cn.bg} ${cn.border}"></span>
-                            <span class="text-on-surface">${(cat.category || 'OTHER').toUpperCase()}</span>
+        try {
+            // 1. Risk Score & Radar
+            const riskRes = await fetch('/api/analytics/risk-score');
+            const riskData = await riskRes.json();
+            if (riskData.score !== undefined) {
+                const scoreEl = document.querySelector('.text-\\[48px\\]');
+                animateValue(scoreEl, 0, riskData.score, 1500);
+                const circle = document.querySelectorAll('circle')[3];
+                if (circle) {
+                    const circumference = 283;
+                    circle.style.strokeDashoffset = circumference - (circumference * riskData.score / 100);
+                }
+            }
+            if (riskData.radar && riskData.radar.length > 0) {
+                const polygon = document.querySelector('polygon');
+                if (polygon) {
+                    const points = riskData.radar.map((r, i) => {
+                        const angle = (Math.PI * 2 * i / riskData.radar.length) - Math.PI / 2;
+                        const radius = (r.value / 100) * 40;
+                        return `${50 + radius * Math.cos(angle)},${50 + radius * Math.sin(angle)}`;
+                    }).join(' ');
+                    polygon.setAttribute('points', points);
+                }
+            }
+
+            // 2. Top Sites
+            const sitesRes = await fetch('/api/analytics/top-sites');
+            const sitesData = await sitesRes.json();
+            const sitesContainer = document.querySelector('.lg\\:col-span-4 .flex-col.justify-between');
+            if (sitesData.length > 0) {
+                sitesContainer.innerHTML = sitesData.slice(0, 5).map(site => `
+                    <div>
+                        <div class="flex justify-between text-label-sm font-label-sm mb-1">
+                            <span class="text-on-surface font-mono">${site.domain}</span>
+                            <span class="text-primary-container">${site.count}</span>
                         </div>
-                        <span class="${cn.text} font-mono text-label-sm">${pct}%</span>
+                        <div class="h-2 w-full bg-surface-container-highest">
+                            <div class="h-full bg-primary-container shadow-[0_0_5px_rgba(0,240,255,0.5)]" style="width: ${Math.min(site.count * 5, 100)}%"></div>
+                        </div>
                     </div>
-                `;
-            });
-        }
-    }).catch(e => console.log('Category API:', e));
+                `).join('');
+            }
+
+            // 3. Categories
+            const catRes = await fetch('/api/analytics/category-breakdown');
+            const catData = await catRes.json();
+            const legend = document.querySelector('.category-legend');
+            if (catData.length > 0) {
+                const total = catData.reduce((acc, c) => acc + c.count, 0);
+                legend.innerHTML = catData.slice(0, 3).map((cat, i) => {
+                    const colors = ['#00f0ff', '#ebb2ff', '#3b494b'];
+                    return `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-label-sm font-label-sm">
+                                <span class="w-3 h-3" style="background-color: ${colors[i]}"></span>
+                                <span class="text-on-surface uppercase">${cat.category}</span>
+                            </div>
+                            <span class="text-primary-container font-mono text-label-sm">${Math.round(cat.count/total*100)}%</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 4. Heatmap
+            const heatRes = await fetch('/api/analytics/hourly-heatmap');
+            const heatData = await heatRes.json();
+            const grid = document.querySelector('.heatmap-grid');
+            if (heatData.length > 0) {
+                grid.innerHTML = heatData.slice(0, 24).map(d => {
+                    const opacity = Math.max(0.1, d.count / 10);
+                    return `<div class="aspect-square heatmap-cell" style="background-color: rgba(0, 240, 255, ${opacity})"></div>`;
+                }).join('');
+            }
+        } catch (e) { console.error("Dashboard error:", e); }
+    }
+
+    loadDashboardData();
 </script>
 </body></html>

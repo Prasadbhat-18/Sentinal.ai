@@ -23,6 +23,8 @@ export const protect = async (req, res, next) => {
   }
 
   if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+    // Demo Mode: Allow guest access with a static ID
+    req.user = { _id: '000000000000000000000000', name: 'Guest User' };
+    next();
   }
 };

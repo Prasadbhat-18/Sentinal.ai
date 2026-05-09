@@ -2,6 +2,8 @@ import fs from 'fs';
 import ActivityLog from '../models/ActivityLog.js';
 import { categorizeDomain } from '../utils/categoryMapper.js';
 import { calculateRiskLevel } from '../utils/riskScorer.js';
+import * as dataStore from '../utils/dataStore.js';
+import mongoose from 'mongoose';
 
 // Helper to extract domain from URL
 const extractDomain = (url) => {
@@ -67,12 +69,18 @@ export const uploadChromeHistory = async (req, res) => {
       });
     }
 
-    // Clear existing logs for user to replace with new upload
-    await ActivityLog.deleteMany({ userId: req.user._id });
-
-    // Insert new logs
-    if (logsToInsert.length > 0) {
-      await ActivityLog.insertMany(logsToInsert);
+    // Clear existing logs for user
+    const isDbConnected = mongoose.connection.readyState === 1;
+    
+    if (isDbConnected) {
+      await ActivityLog.deleteMany({ userId: req.user._id });
+      if (logsToInsert.length > 0) {
+        await ActivityLog.insertMany(logsToInsert);
+      }
+    } else {
+      dataStore.clearLogs(req.user._id);
+      dataStore.addLogs(logsToInsert);
+      console.log('Data stored in-memory (DB disconnected)');
     }
 
     // Clean up uploaded file

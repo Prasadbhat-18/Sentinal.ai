@@ -102,14 +102,9 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400&amp;family=JetBrains+Mono:wght@500&amp;family=Space+Grotesk:wght@600;700;900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
-        body { background-color: #050608; } /* Deepest base layer */
-        .glass-panel {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        /* Hide scrollbar for clean analytical look */
+        body { background-color: #050608; }
+        .glass-panel { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #3b494b; border-radius: 0; }
@@ -117,144 +112,68 @@
     </style>
 </head>
 <body class="bg-background text-on-background antialiased flex h-screen overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
-<!-- JSON Component: SideNavBar -->
 <nav class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-surface-container-lowest/90 dark:bg-surface-container-lowest/90 backdrop-blur-2xl border-r border-outline-variant/30 w-64">
-<!-- Header -->
 <div class="px-6 mb-8 flex flex-col gap-2">
 <div class="flex items-center gap-3">
-<span aria-label="System Logo" class="material-symbols-outlined text-primary text-3xl">security</span>
+<span class="material-symbols-outlined text-primary text-3xl">security</span>
 <div class="flex flex-col">
 <span class="text-headline-md font-headline-md font-black text-primary dark:text-primary tracking-widest">SENTINEL</span>
 <span class="text-label-sm font-label-sm text-outline tracking-widest uppercase">v2.04.1</span>
 </div>
 </div>
 </div>
-<!-- Navigation Links -->
 <ul class="flex flex-col flex-1 px-4 gap-2">
-<!-- Dashboard (Inactive) -->
-<li>
-<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
-<span class="material-symbols-outlined">grid_view</span>
-                    Dashboard
-                </a>
-</li>
-<!-- Timeline (Inactive) -->
-<li>
-<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
-<span class="material-symbols-outlined">history_toggle_off</span>
-                    Timeline
-                </a>
-</li>
-<!-- Audit (Active - Mapped conceptually to Data Upload/Inspection) -->
-<li>
-<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-primary-container dark:text-on-primary-container bg-primary-container/20 border-l-4 border-primary font-bold uppercase" href="#">
-<span class="material-symbols-outlined">security</span>
-                    Audit
-                </a>
-</li>
-<!-- History (Inactive) -->
-<li>
-<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
-<span class="material-symbols-outlined">database</span>
-                    History
-                </a>
-</li>
-<!-- Settings (Inactive) -->
-<li>
-<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
-<span class="material-symbols-outlined">tune</span>
-                    Settings
-                </a>
-</li>
+<li><a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all uppercase" href="dashboard.html"><span class="material-symbols-outlined">grid_view</span>Dashboard</a></li>
+<li><a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-primary-container bg-primary-container/20 border-l-4 border-primary font-bold uppercase" href="upload.html"><span class="material-symbols-outlined">security</span>Audit</a></li>
+<li><a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all uppercase" href="upload.html"><span class="material-symbols-outlined">database</span>History</a></li>
 </ul>
-<!-- CTA -->
 <div class="px-6 mt-auto">
-<button class="w-full py-3 border border-primary text-primary text-label-md font-label-md uppercase tracking-widest hover:bg-primary/10 transition-colors duration-200">
-                INJECT DATA
-            </button>
+<button class="w-full py-3 border border-primary text-primary text-label-md font-label-md uppercase tracking-widest hover:bg-primary/10 transition-colors">INJECT DATA</button>
 </div>
 </nav>
-<!-- Main Content Canvas -->
+
 <main class="ml-64 flex-1 h-full overflow-y-auto p-margin-desktop bg-surface/30 relative">
-<!-- Scanline overlay effect for structural depth without shadows -->
 <div class="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,#ffffff_50%)] bg-[length:100%_4px] z-0"></div>
 <div class="max-w-4xl mx-auto relative z-10 flex flex-col gap-12">
-<!-- Page Header -->
 <header class="flex flex-col gap-2">
 <h1 class="text-headline-lg font-headline-lg text-primary tracking-tighter uppercase">Data Intake Sequence</h1>
 <p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">Initialize secure localized ingestion of raw telemetry logs. Establish source parameters for deep analysis.</p>
 </header>
-<!-- Progress Stepper (Terminal Style) -->
-<div class="flex items-center w-full gap-2 border border-outline-variant/30 p-2 bg-surface-container-low/50 glass-panel">
-<!-- Step 1: Completed -->
-<div class="flex-1 h-2 bg-primary/30 flex items-center relative">
-<div class="absolute w-full h-full bg-primary/20"></div>
-<div class="w-full h-full border-b-2 border-primary"></div>
-<span class="absolute -top-6 text-label-sm font-label-sm text-outline uppercase left-0">01. Authenticate</span>
-</div>
-<!-- Step 2: Active -->
-<div class="flex-1 h-2 bg-primary flex items-center relative shadow-[0_0_8px_rgba(0,240,255,0.4)]">
-<span class="absolute -top-6 text-label-sm font-label-sm text-primary font-bold uppercase left-0">02. Ready to Parse</span>
-</div>
-<!-- Step 3: Pending -->
-<div class="flex-1 h-2 bg-surface-container-highest flex items-center relative">
-<span class="absolute -top-6 text-label-sm font-label-sm text-outline-variant uppercase left-0">03. Audit Protocol</span>
-</div>
-</div>
-<!-- Main Interactive Zone: URL Input -->
+
 <div class="relative group">
-<div class="absolute inset-0 bg-surface-container-low/60 glass-panel border-t border-outline-variant/80 border-x border-b border-outline-variant/30 group-hover:border-primary/60 transition-colors duration-300"></div>
-<div class="relative z-10 p-16 flex flex-col items-center justify-center text-center gap-6 min-h-[400px] border border-dashed border-transparent m-4 transition-all duration-300">
-<div class="w-20 h-20 rounded-none bg-surface-container-high border border-outline-variant/50 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/50 transition-colors duration-300 mb-4">
-<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors duration-300">language</span>
+<input type="file" id="fileInput" class="hidden" accept=".json,.csv,.txt">
+<div onclick="document.getElementById('fileInput').click()" class="absolute inset-0 bg-surface-container-low/60 glass-panel border-t border-outline-variant/80 border-x border-b border-outline-variant/30 group-hover:border-primary/60 transition-colors duration-300 cursor-pointer"></div>
+<div class="relative z-10 p-16 flex flex-col items-center justify-center text-center gap-6 min-h-[400px] border border-dashed border-transparent m-4 transition-all duration-300 pointer-events-none">
+<div class="w-20 h-20 bg-surface-container-high border border-outline-variant/50 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/50 transition-colors duration-300 mb-4">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary">upload_file</span>
 </div>
-<h2 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors duration-300">Scan Website URL</h2>
-<p class="text-body-md font-body-md text-on-surface-variant max-w-md">
-    Paste the link of the website you are currently using to instantly analyze privacy factors and behavioral trackers.
-</p>
-<input type="url" id="urlInput" placeholder="https://example.com" class="w-full max-w-md bg-surface-container-highest border border-outline-variant/50 text-on-surface p-4 text-center focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300">
+<h2 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary">Upload Telemetry File</h2>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-md">Drop your Chrome History JSON or CSV here for deep behavioral auditing.</p>
 </div>
 </div>
-<!-- Lower Section: Security Badge & Action -->
+
 <div class="flex items-center justify-between mt-8 border-t border-outline-variant/30 pt-8">
-<!-- Security Trust Badge -->
 <div class="flex items-center gap-4 px-4 py-3 bg-surface-container-low border border-outline-variant/40 max-w-md">
 <span class="material-symbols-outlined text-secondary text-xl">gpp_good</span>
 <div>
 <h4 class="text-label-md font-label-md text-on-surface uppercase mb-1">Zero-Retention Policy</h4>
-<p class="text-body-sm font-body-sm text-on-surface-variant">Why we don't store your raw logs: Analysis is performed locally in-memory. Data evaporates upon session termination.</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Analysis is performed locally in-memory. Data evaporates upon session termination.</p>
 </div>
 </div>
-<!-- Primary Action -->
-<button class="bg-primary text-on-primary px-8 py-4 text-label-md font-label-md uppercase tracking-widest border border-primary hover:bg-primary-fixed transition-colors duration-200 flex items-center gap-3">
-                    Initialize Analysis
-                    <span class="material-symbols-outlined text-lg">arrow_forward_ios</span>
+<button id="uploadBtn" class="bg-primary text-on-primary px-8 py-4 text-label-md font-label-md uppercase tracking-widest border border-primary hover:bg-primary-fixed transition-colors flex items-center gap-3">
+    Initialize Analysis
+    <span class="material-symbols-outlined text-lg">arrow_forward_ios</span>
 </button>
 </div>
 </div>
 </main>
-<!-- Particle Background -->
 <div id="scanParticles" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
-
-<!-- Loading Overlay -->
-<div id="loadingOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,6,8,0.95);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:24px;">
-    <div style="width:60px;height:60px;border:3px solid #3b494b;border-top:3px solid #00f0ff;border-radius:50%;animation:spin 1s linear infinite;"></div>
-    <div id="loadingText" style="color:#00f0ff;font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:0.1em;text-transform:uppercase;">INITIALIZING SCAN...</div>
-    <div id="loadingDomain" style="color:#e3e1e9;font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;"></div>
-    <div id="loadingProgress" style="width:300px;height:4px;background:#292a2f;margin-top:12px;overflow:hidden;"><div id="loadingBar" style="width:0%;height:100%;background:linear-gradient(90deg,#00f0ff,#ebb2ff);transition:width 0.3s ease;"></div></div>
-</div>
-<style>
-    @keyframes spin { to { transform: rotate(360deg); } }
-    body { opacity: 0; animation: fadeIn 0.6s ease forwards; }
-    @keyframes fadeIn { to { opacity: 1; } }
-</style>
 
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <script>
     // Navigation
     document.querySelectorAll('a').forEach(a => {
         if (a.textContent.includes('Dashboard')) a.href = 'dashboard.html';
-        if (a.textContent.includes('History')) a.href = 'dashboard.html';
     });
 
     // Particles
@@ -269,82 +188,69 @@
             shape: { type: "circle" },
             size: { value: { min: 1, max: 2 } }
         },
-        interactivity: {
-            events: { onHover: { enable: true, mode: "repulse" } },
-            modes: { repulse: { distance: 100, speed: 0.5 } }
-        },
         detectRetina: true
     });
 
-    const urlInput = document.getElementById('urlInput');
-    const uploadBtn = document.querySelector('button.bg-primary');
-    const overlay = document.getElementById('loadingOverlay');
-    const loadingText = document.getElementById('loadingText');
-    const loadingDomain = document.getElementById('loadingDomain');
-    const loadingBar = document.getElementById('loadingBar');
+    const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const injectBtn = document.querySelector('nav button');
 
-    // Enter key support
-    urlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') uploadBtn.click(); });
-
-    uploadBtn.onclick = async () => {
-        const url = urlInput.value.trim();
-        if (!url) return alert("Please paste a URL first");
-
-        // Validate URL format
-        try { new URL(url); } catch(e) {
-            return alert("Invalid URL format. Please include http:// or https://");
-        }
-
-        // Show loading overlay with animation
-        overlay.style.display = 'flex';
-        loadingDomain.textContent = new URL(url).hostname;
-        
-        const phases = [
-            { text: "RESOLVING TARGET...", pct: 15 },
-            { text: "ANALYZING DOMAIN...", pct: 35 },
-            { text: "SCANNING TRACKERS...", pct: 55 },
-            { text: "CALCULATING RISK VECTORS...", pct: 75 },
-            { text: "COMPILING REPORT...", pct: 90 }
-        ];
-
-        // Animate loading phases
-        for (let i = 0; i < phases.length; i++) {
-            await new Promise(r => setTimeout(r, 400));
-            loadingText.textContent = phases[i].text;
-            loadingBar.style.width = phases[i].pct + '%';
-        }
-
-        // Call backend API
+    injectBtn.onclick = async () => {
         try {
-            const res = await fetch('/api/upload/scan', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            });
+            const res = await fetch('sample_history.json');
             const data = await res.json();
-
-            if (res.ok) {
-                loadingText.textContent = "SCAN COMPLETE — REDIRECTING...";
-                loadingBar.style.width = '100%';
-                localStorage.setItem('scannedURL', JSON.stringify(data));
-                
-                await new Promise(r => setTimeout(r, 600));
-                document.body.style.transition = 'opacity 0.4s ease';
-                document.body.style.opacity = '0';
-                setTimeout(() => window.location.href = 'dashboard.html', 400);
-            } else {
-                overlay.style.display = 'none';
-                alert("Scan failed: " + (data.message || "Unknown error"));
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const file = new File([blob], 'sample_history.json');
+            
+            const formData = new FormData();
+            formData.append('historyFile', file);
+            
+            const uploadRes = await fetch('/api/upload/chrome-history', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (uploadRes.ok) {
+                window.location.href = 'dashboard.html';
             }
         } catch (err) {
-            overlay.style.display = 'none';
-            alert("Connection error: " + err.message);
+            console.error("Injection failed:", err);
         }
     };
 
-    // INJECT DATA button
-    document.querySelectorAll('button').forEach(btn => {
-        if (btn.textContent.includes('INJECT DATA')) btn.onclick = () => urlInput.focus();
-    });
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            document.querySelector('h2').textContent = file.name;
+            document.querySelector('p.text-body-md').textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+        }
+    };
+
+    uploadBtn.onclick = async () => {
+        if (!fileInput.files[0]) return alert("Please select a file first");
+        uploadBtn.textContent = "PROCESSING...";
+        
+        const formData = new FormData();
+        formData.append('historyFile', fileInput.files[0]);
+
+        try {
+            const response = await fetch('/api/upload/chrome-history', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                window.location.href = 'dashboard.html';
+            } else {
+                const err = await response.json();
+                alert("Upload failed: " + err.message);
+                uploadBtn.textContent = "Initialize Analysis";
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error connecting to server");
+            uploadBtn.textContent = "Initialize Analysis";
+        }
+    };
 </script>
 </body></html>

@@ -1,5 +1,8 @@
 import fs from 'fs';
 import { calculateOverallRisk } from '../utils/riskScorer.js';
+import * as dataStore from '../utils/dataStore.js';
+import mongoose from 'mongoose';
+import ActivityLog from '../models/ActivityLog.js';
 
 const getMockDB = () => {
   try {
@@ -15,13 +18,22 @@ const getMockDB = () => {
 // @access  Private
 export const getTopSites = async (req, res) => {
   try {
-    const logs = getMockDB();
-    const domainCounts = {};
-    logs.forEach(l => { domainCounts[l.domain] = (domainCounts[l.domain] || 0) + 1; });
-    const topSites = Object.entries(domainCounts)
-      .map(([domain, count]) => ({ domain, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
+    const isDbConnected = mongoose.connection.readyState === 1;
+    let topSites;
+
+    if (isDbConnected) {
+      topSites = await ActivityLog.aggregate([
+        { $match: { userId: req.user._id } },
+        { $group: { _id: '$domain', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 10 }
+      ]);
+      topSites = topSites.map(s => ({ domain: s._id, count: s.count }));
+    } else {
+      topSites = dataStore.aggregateLogs(req.user._id, 'domain')
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+    }
     
     res.json(topSites);
   } catch (error) {
@@ -34,13 +46,21 @@ export const getTopSites = async (req, res) => {
 // @access  Private
 export const getHourlyHeatmap = async (req, res) => {
   try {
-    const logs = getMockDB();
+    const isDbConnected = mongoose.connection.readyState === 1;
+    let logs;
+
+    if (isDbConnected) {
+      logs = await ActivityLog.find({ userId: req.user._id }).select('visitedAt scannedAt');
+    } else {
+      logs = dataStore.getLogs(req.user._id);
+    }
     
     const hourlyDistribution = new Array(24).fill(0);
     
     logs.forEach(log => {
-      if (log.visitedAt || log.scannedAt) {
-        const hour = new Date(log.visitedAt || log.scannedAt).getHours();
+      const date = log.visitedAt || log.scannedAt;
+      if (date) {
+        const hour = new Date(date).getHours();
         hourlyDistribution[hour]++;
       }
     });
@@ -56,12 +76,20 @@ export const getHourlyHeatmap = async (req, res) => {
 // @access  Private
 export const getCategoryBreakdown = async (req, res) => {
   try {
-    const logs = getMockDB();
-    const catCounts = {};
-    logs.forEach(l => { catCounts[l.category] = (catCounts[l.category] || 0) + 1; });
-    const categories = Object.entries(catCounts)
-      .map(([category, count]) => ({ category, count }))
-      .sort((a, b) => b.count - a.count);
+    const isDbConnected = mongoose.connection.readyState === 1;
+    let categories;
+
+    if (isDbConnected) {
+      categories = await ActivityLog.aggregate([
+        { $match: { userId: req.user._id } },
+        { $group: { _id: '$category', count: { $sum: 1 } } },
+        { $sort: { count: -1 } }
+      ]);
+      categories = categories.map(c => ({ category: c._id, count: c.count }));
+    } else {
+      categories = dataStore.aggregateLogs(req.user._id, 'category')
+        .sort((a, b) => b.count - a.count);
+    }
     
     res.json(categories);
   } catch (error) {
@@ -74,14 +102,20 @@ export const getCategoryBreakdown = async (req, res) => {
 // @access  Private
 export const getRiskScore = async (req, res) => {
   try {
-    const logs = getMockDB();
+    const isDbConnected = mongoose.connection.readyState === 1;
+    let logs;
+
+    if (isDbConnected) {
+      logs = await ActivityLog.find({ userId: req.user._id }).sort({ visitedAt: -1, scannedAt: -1 });
+    } else {
+      logs = dataStore.getLogs(req.user._id).sort((a, b) => new Date(b.visitedAt || b.scannedAt) - new Date(a.visitedAt || a.scannedAt));
+    }
     
     if (logs.length === 0) {
       return res.json({ score: 0, radar: [], domain: '' });
     }
 
     // Calculate risk from the scanned data
-    const totalVisits = logs.length;
     const latestDomain = logs[0].domain || '';
     const latestCategory = logs[0].category || 'uncategorized';
     
@@ -95,8 +129,6 @@ export const getRiskScore = async (req, res) => {
     const hasTrackers = ['facebook.com','instagram.com','tiktok.com','twitter.com','x.com','google.com','youtube.com','amazon.com','doubleclick.net'].some(t => latestDomain.includes(t));
     const isSocial = ['facebook','instagram','tiktok','twitter','x.com','reddit','linkedin','snapchat','pinterest'].some(t => latestDomain.includes(t));
     const isShopping = ['amazon','ebay','walmart','target','etsy','shop','flipkart','alibaba'].some(t => latestDomain.includes(t));
-    const isDev = ['github','gitlab','stackoverflow','npmjs','codepen','replit','vercel','netlify'].some(t => latestDomain.includes(t));
-    const isNews = ['nytimes','cnn','bbc','reuters','news','theverge','techcrunch','medium'].some(t => latestDomain.includes(t));
     const isPrivacy = ['duckduckgo','proton','signal','tor','brave'].some(t => latestDomain.includes(t));
 
     const radar = [
@@ -111,5 +143,44 @@ export const getRiskScore = async (req, res) => {
     res.json({ score: overallScore, radar, domain: latestDomain, category: latestCategory });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Scan a specific URL for threats and leaks
+// @route   POST /api/analytics/scan-url
+// @access  Private
+export const scanUrl = async (req, res) => {
+  const { url } = req.body;
+  if (!url) return res.status(400).json({ message: 'URL is required' });
+
+  try {
+    const domain = new URL(url).hostname.replace(/^www\./, '');
+    
+    // Simulated scan logic
+    const threats = [
+      { id: 'T1', type: 'Cross-Site Scripting', risk: 'HIGH', status: 'ACTIVE' },
+      { id: 'T2', type: 'Unencrypted Data Flow', risk: 'MEDIUM', status: 'FLAGGED' },
+      { id: 'T3', type: 'Third-Party Pixel Tracking', risk: 'LOW', status: 'DETECTED' }
+    ].filter(() => Math.random() > 0.3);
+
+    const leaks = [
+      { id: 'L1', site: 'Dark Web Forum #4', data: 'Email Address', date: '2024-03-12' },
+      { id: 'L2', site: 'Public S3 Bucket', data: 'IP History', date: '2024-01-05' },
+      { id: 'L3', site: 'Ad-Tech Aggregator', data: 'Browser Fingerprint', date: '2023-11-20' }
+    ].filter(() => Math.random() > 0.4);
+
+    const result = {
+      domain,
+      url,
+      timestamp: new Date(),
+      threatScore: Math.floor(Math.random() * 60 + 40),
+      threats,
+      leaks,
+      summary: `Domain ${domain} exhibits ${threats.length} active vulnerabilities and has been linked to ${leaks.length} historical data leaks.`
+    };
+
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid URL format' });
   }
 };

@@ -3,19 +3,17 @@ import {
   getTopSites, 
   getHourlyHeatmap, 
   getCategoryBreakdown,
-  getRiskScore 
+  getRiskScore,
+  scanUrl
 } from '../controllers/analyticsController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-const mockAuth = (req, res, next) => {
-  req.user = { _id: 'mock-user-123' };
-  next();
-};
-
-router.get('/top-sites', mockAuth, getTopSites);
-router.get('/hourly-heatmap', mockAuth, getHourlyHeatmap);
-router.get('/category-breakdown', mockAuth, getCategoryBreakdown);
-router.get('/risk-score', mockAuth, getRiskScore);
+router.get('/top-sites', protect, getTopSites);
+router.get('/hourly-heatmap', protect, getHourlyHeatmap);
+router.get('/category-breakdown', protect, getCategoryBreakdown);
+router.get('/risk-score', protect, getRiskScore);
+router.post('/scan-url', protect, scanUrl);
 
 export default router;

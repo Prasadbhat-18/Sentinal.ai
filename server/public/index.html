@@ -139,7 +139,7 @@
 </div>
 <div class="flex items-center gap-4">
 <span class="text-label-sm font-label-sm text-secondary-fixed font-bold tracking-widest hidden md:inline-block border border-secondary-fixed/30 px-3 py-1 rounded-none bg-secondary-fixed/5">CONNECTION: SECURE</span>
-<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-colors uppercase">Get Started</button>
+<button onclick="window.location.href='upload.html'" class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-colors uppercase">Get Started</button>
 </div>
 </header>
 <main class="flex-grow pt-16">
@@ -163,14 +163,10 @@
 <p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl text-center">
                     Uncover invisible data trails with absolute precision. Our zero-knowledge engine analyzes your digital footprint entirely on your machine. No cloud uploads. Total operational security.
                 </p>
-<div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
-<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 border border-primary hover:bg-primary-container transition-colors uppercase tracking-widest relative overflow-hidden group">
-<span class="relative z-10">Initiate Scan</span>
-<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-</button>
-<button class="bg-surface/50 text-primary font-label-md text-label-md px-8 py-4 border border-outline-variant hover:border-primary glow-border transition-colors uppercase tracking-widest backdrop-blur-md">
-                        View Documentation
-                    </button>
+<div class="flex flex-col gap-6 mt-8">
+    <button onclick="window.location.href='upload.html'" class="bg-primary text-on-primary font-label-md text-label-md px-12 py-4 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-colors uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+        Initialize System Scan
+    </button>
 </div>
 </div>
 <!-- Decorative grid overlay -->
@@ -255,7 +251,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <script>
     document.querySelectorAll('a, button').forEach(el => {
-        if (el.textContent.includes('Get Started') || el.textContent.includes('Initiate Scan')) {
+        if (el.textContent.includes('Get Started') || el.textContent.includes('Initialize System Scan')) {
             if (el.tagName === 'A') el.href = 'upload.html';
             else el.onclick = () => {
                 // Add fade out transition
@@ -266,22 +262,24 @@
         }
     });
 
-    tsParticles.load("tsparticles", {
-        fpsLimit: 60,
-        particles: {
-            color: { value: "#00f0ff" },
-            links: { color: "#00f0ff", distance: 150, enable: true, opacity: 0.3, width: 1 },
-            move: { enable: true, speed: 1, direction: "none", random: false, straight: false, outModes: "out" },
-            number: { density: { enable: true, area: 800 }, value: 80 },
-            opacity: { value: 0.5 },
-            shape: { type: "circle" },
-            size: { value: { min: 1, max: 3 } }
-        },
-        interactivity: {
-            events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: true, mode: "push" } },
-            modes: { grab: { distance: 140, links: { opacity: 1 } }, push: { quantity: 4 } }
-        },
-        detectRetina: true
-    });
+    if (typeof tsParticles !== 'undefined') {
+        tsParticles.load("tsparticles", {
+            fpsLimit: 60,
+            particles: {
+                color: { value: "#00f0ff" },
+                links: { color: "#00f0ff", distance: 150, enable: true, opacity: 0.3, width: 1 },
+                move: { enable: true, speed: 1, direction: "none", random: false, straight: false, outModes: "out" },
+                number: { density: { enable: true, area: 800 }, value: 80 },
+                opacity: { value: 0.5 },
+                shape: { type: "circle" },
+                size: { value: { min: 1, max: 3 } }
+            },
+            interactivity: {
+                events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: true, mode: "push" } },
+                modes: { grab: { distance: 140, links: { opacity: 1 } }, push: { quantity: 4 } }
+            },
+            detectRetina: true
+        });
+    }
 </script>
 </body></html>
