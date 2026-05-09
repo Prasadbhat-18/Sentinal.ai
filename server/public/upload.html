@@ -233,42 +233,118 @@
 </div>
 </div>
 </main>
+<!-- Particle Background -->
+<div id="scanParticles" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,6,8,0.95);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:24px;">
+    <div style="width:60px;height:60px;border:3px solid #3b494b;border-top:3px solid #00f0ff;border-radius:50%;animation:spin 1s linear infinite;"></div>
+    <div id="loadingText" style="color:#00f0ff;font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:0.1em;text-transform:uppercase;">INITIALIZING SCAN...</div>
+    <div id="loadingDomain" style="color:#e3e1e9;font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;"></div>
+    <div id="loadingProgress" style="width:300px;height:4px;background:#292a2f;margin-top:12px;overflow:hidden;"><div id="loadingBar" style="width:0%;height:100%;background:linear-gradient(90deg,#00f0ff,#ebb2ff);transition:width 0.3s ease;"></div></div>
+</div>
+<style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    body { opacity: 0; animation: fadeIn 0.6s ease forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <script>
+    // Navigation
     document.querySelectorAll('a').forEach(a => {
         if (a.textContent.includes('Dashboard')) a.href = 'dashboard.html';
+        if (a.textContent.includes('History')) a.href = 'dashboard.html';
+    });
+
+    // Particles
+    tsParticles.load("scanParticles", {
+        fpsLimit: 60,
+        particles: {
+            color: { value: ["#00f0ff", "#ebb2ff"] },
+            links: { color: "#00f0ff", distance: 120, enable: true, opacity: 0.15, width: 0.8 },
+            move: { enable: true, speed: 0.6, direction: "none", random: true, straight: false, outModes: "out" },
+            number: { density: { enable: true, area: 1200 }, value: 40 },
+            opacity: { value: { min: 0.1, max: 0.4 } },
+            shape: { type: "circle" },
+            size: { value: { min: 1, max: 2 } }
+        },
+        interactivity: {
+            events: { onHover: { enable: true, mode: "repulse" } },
+            modes: { repulse: { distance: 100, speed: 0.5 } }
+        },
+        detectRetina: true
     });
 
     const urlInput = document.getElementById('urlInput');
     const uploadBtn = document.querySelector('button.bg-primary');
-    
-    uploadBtn.onclick = () => {
+    const overlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const loadingDomain = document.getElementById('loadingDomain');
+    const loadingBar = document.getElementById('loadingBar');
+
+    // Enter key support
+    urlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') uploadBtn.click(); });
+
+    uploadBtn.onclick = async () => {
         const url = urlInput.value.trim();
         if (!url) return alert("Please paste a URL first");
-        uploadBtn.textContent = "ANALYZING...";
+
+        // Validate URL format
+        try { new URL(url); } catch(e) {
+            return alert("Invalid URL format. Please include http:// or https://");
+        }
+
+        // Show loading overlay with animation
+        overlay.style.display = 'flex';
+        loadingDomain.textContent = new URL(url).hostname;
         
+        const phases = [
+            { text: "RESOLVING TARGET...", pct: 15 },
+            { text: "ANALYZING DOMAIN...", pct: 35 },
+            { text: "SCANNING TRACKERS...", pct: 55 },
+            { text: "CALCULATING RISK VECTORS...", pct: 75 },
+            { text: "COMPILING REPORT...", pct: 90 }
+        ];
+
+        // Animate loading phases
+        for (let i = 0; i < phases.length; i++) {
+            await new Promise(r => setTimeout(r, 400));
+            loadingText.textContent = phases[i].text;
+            loadingBar.style.width = phases[i].pct + '%';
+        }
+
+        // Call backend API
         try {
-            const domain = new URL(url).hostname.replace(/^www\./, '');
-            // Real-time categorization heuristic
-            const category = (domain.includes('shop') || domain.includes('amazon')) ? 'Commerce' : 
-                             (domain.includes('social') || domain.includes('facebook') || domain.includes('instagram')) ? 'Social' :
-                             (domain.includes('github') || domain.includes('stack')) ? 'Development' : 'General Web';
-                             
-            const riskScore = Math.floor(Math.random() * 40) + 40; // 40-80
-            
-            localStorage.setItem('scannedURL', JSON.stringify({
-                url,
-                domain,
-                category,
-                riskScore
-            }));
-            
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 800);
-        } catch(e) {
-            alert("Invalid URL format. Please include http:// or https://");
-            uploadBtn.innerHTML = `Initialize Analysis <span class="material-symbols-outlined text-lg">arrow_forward_ios</span>`;
+            const res = await fetch('/api/upload/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                loadingText.textContent = "SCAN COMPLETE — REDIRECTING...";
+                loadingBar.style.width = '100%';
+                localStorage.setItem('scannedURL', JSON.stringify(data));
+                
+                await new Promise(r => setTimeout(r, 600));
+                document.body.style.transition = 'opacity 0.4s ease';
+                document.body.style.opacity = '0';
+                setTimeout(() => window.location.href = 'dashboard.html', 400);
+            } else {
+                overlay.style.display = 'none';
+                alert("Scan failed: " + (data.message || "Unknown error"));
+            }
+        } catch (err) {
+            overlay.style.display = 'none';
+            alert("Connection error: " + err.message);
         }
     };
+
+    // INJECT DATA button
+    document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.includes('INJECT DATA')) btn.onclick = () => urlInput.focus();
+    });
 </script>
 </body></html>

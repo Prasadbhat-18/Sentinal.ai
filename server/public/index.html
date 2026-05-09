@@ -148,7 +148,8 @@
 <!-- Background Visual -->
 <div class="absolute inset-0 z-0 opacity-40">
 <div class="absolute inset-0 bg-background mix-blend-multiply z-10"></div>
-<img alt="Digital Fingerprint" class="w-full h-full object-cover" data-alt="A highly complex, stylized digital fingerprint glowing with intense cyan and neon blue light against an abyss of deep black. The fingerprint is composed of intricate binary data streams and sharp geometric nodes, resembling a high-tech scanner visualization. The lighting is harsh and synthetic, creating a pure dark-mode, cyberpunk aesthetic suitable for advanced cybersecurity analytics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnga5iYKJn9GgfNYUJlym2TNXPqBS7L3u11RE98Q6rKWpoqNs3EGYb2N-D6-YrxjoTWsj56d32ucb_BlvaObjQ7TazOKcrOh4yfIHuiGQys8RMRzG5l133MIpfLm3lg8i7NF1DIaopJoIvVeB3NL0YhMlmYDIGqReVY0_akomf3l8Cs7yvHiwCrBkz8wBho_SkF9UE8mFeCV_z7scI41R0lZTraRDnrnFjxvRhtLuhiJ2d0er2PVbTYLZ45CAyP2M5kq0Z62Grx5wk"/>
+<div id="tsparticles" class="absolute inset-0 z-0"></div>
+<img alt="Digital Fingerprint" class="w-full h-full object-cover opacity-30 mix-blend-screen" data-alt="A highly complex, stylized digital fingerprint glowing with intense cyan and neon blue light against an abyss of deep black. The fingerprint is composed of intricate binary data streams and sharp geometric nodes, resembling a high-tech scanner visualization. The lighting is harsh and synthetic, creating a pure dark-mode, cyberpunk aesthetic suitable for advanced cybersecurity analytics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnga5iYKJn9GgfNYUJlym2TNXPqBS7L3u11RE98Q6rKWpoqNs3EGYb2N-D6-YrxjoTWsj56d32ucb_BlvaObjQ7TazOKcrOh4yfIHuiGQys8RMRzG5l133MIpfLm3lg8i7NF1DIaopJoIvVeB3NL0YhMlmYDIGqReVY0_akomf3l8Cs7yvHiwCrBkz8wBho_SkF9UE8mFeCV_z7scI41R0lZTraRDnrnFjxvRhtLuhiJ2d0er2PVbTYLZ45CAyP2M5kq0Z62Grx5wk"/>
 </div>
 <!-- Content -->
 <div class="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
@@ -251,12 +252,36 @@
 </div>
 </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <script>
     document.querySelectorAll('a, button').forEach(el => {
         if (el.textContent.includes('Get Started') || el.textContent.includes('Initiate Scan')) {
             if (el.tagName === 'A') el.href = 'upload.html';
-            else el.onclick = () => window.location.href = 'upload.html';
+            else el.onclick = () => {
+                // Add fade out transition
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '0';
+                setTimeout(() => window.location.href = 'upload.html', 500);
+            };
         }
+    });
+
+    tsParticles.load("tsparticles", {
+        fpsLimit: 60,
+        particles: {
+            color: { value: "#00f0ff" },
+            links: { color: "#00f0ff", distance: 150, enable: true, opacity: 0.3, width: 1 },
+            move: { enable: true, speed: 1, direction: "none", random: false, straight: false, outModes: "out" },
+            number: { density: { enable: true, area: 800 }, value: 80 },
+            opacity: { value: 0.5 },
+            shape: { type: "circle" },
+            size: { value: { min: 1, max: 3 } }
+        },
+        interactivity: {
+            events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: true, mode: "push" } },
+            modes: { grab: { distance: 140, links: { opacity: 1 } }, push: { quantity: 4 } }
+        },
+        detectRetina: true
     });
 </script>
 </body></html>

@@ -504,38 +504,210 @@
 </div>
 </div>
 </main>
+<style>
+    body { opacity: 0; animation: dashFadeIn 0.8s ease 0.2s forwards; }
+    @keyframes dashFadeIn { to { opacity: 1; } }
+    @keyframes scanBeam { 0% { top: 0; } 100% { top: 100%; } }
+    .scanner-beam { animation: scanBeam 3s ease-in-out infinite; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // ===== NAVIGATION =====
     document.querySelectorAll('a').forEach(a => {
-        if (a.textContent.includes('Dashboard')) a.href = 'dashboard.html';
-        if (a.textContent.includes('Audit')) a.href = 'upload.html';
+        if (a.textContent.trim() === 'Dashboard') a.href = 'dashboard.html';
+        if (a.textContent.trim() === 'Audit') a.href = 'upload.html';
+        if (a.textContent.trim() === 'History') a.href = 'upload.html';
+    });
+    document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.includes('INJECT DATA')) btn.onclick = () => window.location.href = 'upload.html';
     });
 
-    const scannedData = JSON.parse(localStorage.getItem('scannedURL'));
-    if (scannedData) {
-        // Update Risk Score
-        const scoreEl = document.querySelector('.text-\\[48px\\]');
-        if (scoreEl) scoreEl.textContent = scannedData.riskScore;
-        
-        // Update Status
-        const statusText = document.querySelector('.text-body-sm.font-body-sm.text-on-surface-variant');
-        if (statusText) statusText.textContent = `Real-time scan complete for ${scannedData.domain}. Estimated cross-site trackers: ${Math.floor(scannedData.riskScore / 10)}.`;
-
-        const statusLabel = document.querySelector('.text-label-sm.font-label-sm.text-tertiary-fixed-dim.uppercase');
-        if (statusLabel) statusLabel.textContent = `Status: ${scannedData.riskScore > 65 ? 'Elevated Risk' : 'Secure'}`;
-        
-        // Update Top Domain
-        const domainEl = document.querySelector('.text-on-surface.font-mono');
-        if (domainEl) domainEl.textContent = scannedData.domain;
-        
-        // Update Category text
-        const catEls = document.querySelectorAll('.text-on-surface');
-        catEls.forEach(el => {
-            if (el.textContent === 'DEVELOPMENT' || el.textContent === 'SOCIAL/COMM' || el.textContent === 'UTILITY/OTHER') {
-                if (el.textContent === 'DEVELOPMENT') el.textContent = scannedData.category.toUpperCase();
-            }
-        });
-    } else {
-        document.querySelector('.text-\\[48px\\]').textContent = Math.floor(Math.random() * 40 + 50); 
+    // ===== HELPER: Animate a number counting up =====
+    function animateValue(el, start, end, duration) {
+        const range = end - start;
+        const startTime = performance.now();
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            el.textContent = Math.floor(start + range * progress);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
     }
+
+    // ===== FETCH RISK SCORE + RADAR =====
+    fetch('/api/analytics/risk-score').then(r => r.json()).then(data => {
+        // Update score with count-up animation
+        const scoreEl = document.querySelector('.text-\\[48px\\]');
+        if (scoreEl && data.score) animateValue(scoreEl, 0, data.score, 1500);
+
+        // Update gauge SVG arc
+        const gaugeCircle = document.querySelectorAll('circle')[3]; // score track circle
+        if (gaugeCircle && data.score) {
+            const circumference = 283;
+            const offset = circumference - (circumference * data.score / 100);
+            gaugeCircle.setAttribute('stroke-dashoffset', offset);
+        }
+
+        // Update status text
+        const statusLabel = document.querySelector('.text-label-sm.font-label-sm.text-tertiary-fixed-dim.uppercase.tracking-wider.mb-1');
+        if (statusLabel) statusLabel.textContent = `Status: ${data.score > 65 ? 'ELEVATED' : data.score > 40 ? 'MODERATE' : 'SECURE'}`;
+
+        const statusBody = statusLabel?.parentElement?.querySelector('.text-body-sm');
+        if (statusBody && data.domain) {
+            statusBody.textContent = `Analysis for ${data.domain}: ${data.score > 65 ? 'High tracker density detected.' : data.score > 40 ? 'Moderate data collection detected.' : 'Minimal tracking observed.'}`;
+        }
+
+        // Update source badge
+        const sourceBadge = document.querySelector('.text-outline');
+        if (sourceBadge && data.domain && sourceBadge.closest('.hidden.md\\:flex')) {
+            sourceBadge.closest('.hidden.md\\:flex').innerHTML = `<span class="material-symbols-outlined text-[14px] mr-2 text-primary-container">language</span>Source: ${data.domain}`;
+        }
+
+        // Update radar chart polygon
+        if (data.radar && data.radar.length >= 6) {
+            const polygon = document.querySelector('polygon');
+            const radarLabels = document.querySelectorAll('.radar-grid .absolute');
+            if (polygon) {
+                // Map radar values (0-100) to SVG polygon points
+                const cx = 50, cy = 50, maxR = 40;
+                const points = data.radar.map((r, i) => {
+                    const angle = (Math.PI * 2 * i / data.radar.length) - Math.PI / 2;
+                    const radius = (r.value / 100) * maxR;
+                    return `${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`;
+                });
+                polygon.setAttribute('points', points.join(' '));
+
+                // Update data point circles
+                const circles = polygon.parentElement.querySelectorAll('circle');
+                data.radar.forEach((r, i) => {
+                    const angle = (Math.PI * 2 * i / data.radar.length) - Math.PI / 2;
+                    const radius = (r.value / 100) * maxR;
+                    if (circles[i]) {
+                        circles[i].setAttribute('cx', cx + radius * Math.cos(angle));
+                        circles[i].setAttribute('cy', cy + radius * Math.sin(angle));
+                    }
+                });
+            }
+            // Update radar labels
+            const labelEls = document.querySelectorAll('.radar-grid > .absolute');
+            const labelNames = data.radar.map(r => r.axis.toUpperCase());
+            if (labelEls.length >= 4 && labelNames.length >= 4) {
+                labelEls[0].textContent = labelNames[0] || 'TRACKERS';
+                labelEls[1].textContent = labelNames[3] || 'DATA';
+                labelEls[2].textContent = labelNames[4] || 'PRIVACY';
+                labelEls[3].textContent = labelNames[1] || 'SOCIAL';
+            }
+        }
+    }).catch(e => console.log('Risk score API:', e));
+
+    // ===== FETCH TOP SITES =====
+    fetch('/api/analytics/top-sites').then(r => r.json()).then(data => {
+        const container = document.querySelector('.flex-1.flex.flex-col.justify-between.gap-4');
+        if (!container || !data.length) return;
+        container.innerHTML = '';
+
+        const maxCount = Math.max(...data.map(d => d.count));
+        data.slice(0, 5).forEach((site, i) => {
+            const pct = Math.max((site.count / maxCount) * 100, 8);
+            const opacities = ['', '/80', '/60', '/40', '/20'];
+            const glow = i === 0 ? 'shadow-[0_0_5px_rgba(0,240,255,0.5)]' : '';
+            container.innerHTML += `
+                <div>
+                    <div class="flex justify-between text-label-sm font-label-sm mb-1">
+                        <span class="text-on-surface font-mono truncate mr-2" title="${site.domain}">${site.domain}</span>
+                        <span class="text-primary-container">${site.count}</span>
+                    </div>
+                    <div class="h-2 w-full bg-surface-container-highest">
+                        <div class="h-full bg-primary-container${opacities[i] || ''} ${glow}" style="width:${pct}%;transition:width 1s ease"></div>
+                    </div>
+                </div>
+            `;
+        });
+        // Animate bars in
+        setTimeout(() => {
+            container.querySelectorAll('.h-full').forEach(bar => bar.style.width = bar.style.width);
+        }, 100);
+    }).catch(e => console.log('Top sites API:', e));
+
+    // ===== FETCH HEATMAP =====
+    fetch('/api/analytics/hourly-heatmap').then(r => r.json()).then(data => {
+        const heatmapGrid = document.querySelector('.grid.grid-cols-6.gap-1');
+        if (!heatmapGrid) return;
+        heatmapGrid.innerHTML = '';
+
+        const maxCount = Math.max(...data.map(d => d.count), 1);
+        data.forEach(hourData => {
+            const intensity = hourData.count / maxCount;
+            let bgClass = 'bg-surface-container-highest';
+            let hoverClass = '';
+            let extraStyle = '';
+
+            if (intensity > 0.8) { bgClass = 'bg-primary-container/80'; hoverClass = 'hover:bg-primary-container'; extraStyle = 'box-shadow:0 0 8px rgba(0,240,255,0.4)'; }
+            else if (intensity > 0.6) { bgClass = 'bg-primary-container/60'; hoverClass = 'hover:bg-primary-container/80'; }
+            else if (intensity > 0.4) { bgClass = 'bg-primary-container/40'; hoverClass = 'hover:bg-primary-container/60'; }
+            else if (intensity > 0.2) { bgClass = 'bg-primary-container/20'; hoverClass = 'hover:bg-primary-container/40'; }
+            else if (intensity > 0.05) { bgClass = 'bg-primary-container/10'; hoverClass = 'hover:bg-primary-container/30'; }
+
+            heatmapGrid.innerHTML += `<div class="aspect-square ${bgClass} heatmap-cell ${hoverClass} transition-colors" title="Hour ${hourData.hour}: ${hourData.count} visits" style="${extraStyle}"></div>`;
+        });
+    }).catch(e => console.log('Heatmap API:', e));
+
+    // ===== FETCH CATEGORY BREAKDOWN =====
+    fetch('/api/analytics/category-breakdown').then(r => r.json()).then(data => {
+        if (!data.length) return;
+        const total = data.reduce((s, c) => s + c.count, 0);
+        const colors = ['#00f0ff', '#ebb2ff', '#3b494b', '#79ff5b', '#e3e1e9', '#ffb4ab'];
+        const colorNames = [
+            { bg: 'bg-primary-container', border: 'border-primary', text: 'text-primary-container' },
+            { bg: 'bg-tertiary-fixed-dim', border: 'border-tertiary', text: 'text-tertiary-fixed-dim' },
+            { bg: 'bg-outline-variant', border: 'border-outline', text: 'text-outline' },
+            { bg: 'bg-secondary-fixed', border: 'border-secondary', text: 'text-secondary-fixed' },
+            { bg: 'bg-on-surface', border: 'border-on-surface-variant', text: 'text-on-surface' }
+        ];
+
+        // Update SVG donut
+        const donutSvg = document.querySelector('.glass-panel:last-child svg');
+        if (donutSvg) {
+            donutSvg.innerHTML = '';
+            let cumulativeOffset = 0;
+            const circumference = 2 * Math.PI * 40; // r=40
+            data.slice(0, 5).forEach((cat, i) => {
+                const pct = cat.count / total;
+                const dashLength = circumference * pct;
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', '50');
+                circle.setAttribute('cy', '50');
+                circle.setAttribute('r', '40');
+                circle.setAttribute('fill', 'none');
+                circle.setAttribute('stroke', colors[i] || '#3b494b');
+                circle.setAttribute('stroke-width', '12');
+                circle.setAttribute('stroke-dasharray', `${dashLength} ${circumference - dashLength}`);
+                circle.setAttribute('stroke-dashoffset', `-${cumulativeOffset}`);
+                circle.style.transformOrigin = 'center';
+                donutSvg.appendChild(circle);
+                cumulativeOffset += dashLength;
+            });
+        }
+
+        // Update legend
+        const legendContainer = donutSvg?.closest('.flex-1.flex.items-center')?.querySelector('.flex-1.flex.flex-col.gap-3');
+        if (legendContainer) {
+            legendContainer.innerHTML = '';
+            data.slice(0, 3).forEach((cat, i) => {
+                const pct = Math.round((cat.count / total) * 100);
+                const cn = colorNames[i] || colorNames[2];
+                legendContainer.innerHTML += `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 text-label-sm font-label-sm">
+                            <span class="w-3 h-3 ${cn.bg} ${cn.border}"></span>
+                            <span class="text-on-surface">${(cat.category || 'OTHER').toUpperCase()}</span>
+                        </div>
+                        <span class="${cn.text} font-mono text-label-sm">${pct}%</span>
+                    </div>
+                `;
+            });
+        }
+    }).catch(e => console.log('Category API:', e));
 </script>
 </body></html>

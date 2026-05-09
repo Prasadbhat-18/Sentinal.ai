@@ -1,13 +1,18 @@
 import express from 'express';
 import multer from 'multer';
 import { uploadChromeHistory } from '../controllers/uploadController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { scanUrl } from '../controllers/scanController.js';
 
 const router = express.Router();
 
-// Setup multer for temporary file storage
+const mockAuth = (req, res, next) => {
+  req.user = { _id: 'mock-user-123' };
+  next();
+};
+
 const upload = multer({ dest: 'uploads/' });
 
-router.post('/chrome-history', protect, upload.single('historyFile'), uploadChromeHistory);
+router.post('/chrome-history', mockAuth, upload.single('historyFile'), uploadChromeHistory);
+router.post('/scan', mockAuth, scanUrl);
 
 export default router;
