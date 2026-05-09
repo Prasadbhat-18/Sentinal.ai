@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Core Analytics Dashboard - SENTINEL.AI</title>
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Geist:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Glassmorphism & Borders */
+        .glass-panel {
+            background-color: rgba(41, 42, 47, 0.4); /* surface-container-high with opacity */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(132, 148, 149, 0.2); /* outline with opacity */
+            border-top: 1px solid rgba(219, 252, 255, 0.1); /* primary bright top edge */
+        }
+        
+        .glass-panel-heavy {
+            background-color: rgba(13, 14, 19, 0.9); /* surface-container-lowest */
+            backdrop-filter: blur(24px);
+        }
+
+        /* Custom Gradients for Charts */
+        .radar-grid {
+            background: 
+                linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        
+        .heatmap-cell {
+            border: 1px solid rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Terminal Cursor blink */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .terminal-cursor::after {
+            content: '█';
+            display: inline-block;
+            animation: blink 1s step-end infinite;
+            color: #00f0ff;
+            margin-left: 4px;
+            font-size: 0.8em;
+        }
+        
+        /* Security Scanner */
+        .scanner-beam {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f0ff, transparent);
+            opacity: 0.7;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121318;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b494b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #849495;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#0f6d00",
+                        "outline": "#849495",
+                        "secondary": "#d7ffc5",
+                        "surface-container-low": "#1a1b21",
+                        "on-primary": "#00363a",
+                        "on-error-container": "#ffdad6",
+                        "surface-bright": "#38393f",
+                        "inverse-primary": "#006970",
+                        "on-surface": "#e3e1e9",
+                        "inverse-surface": "#e3e1e9",
+                        "primary-fixed": "#7df4ff",
+                        "tertiary-fixed-dim": "#ebb2ff",
+                        "on-secondary": "#053900",
+                        "primary": "#dbfcff",
+                        "outline-variant": "#3b494b",
+                        "on-primary-fixed": "#002022",
+                        "on-tertiary-container": "#9900d1",
+                        "tertiary": "#fff2fe",
+                        "on-background": "#e3e1e9",
+                        "primary-container": "#00f0ff",
+                        "surface-container-high": "#292a2f",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#34343a",
+                        "surface-variant": "#34343a",
+                        "surface-container-lowest": "#0d0e13",
+                        "on-secondary-fixed-variant": "#095300",
+                        "secondary-fixed": "#79ff5b",
+                        "on-error": "#690005",
+                        "background": "#121318",
+                        "on-surface-variant": "#b9cacb",
+                        "on-tertiary": "#520072",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-tint": "#00dbe9",
+                        "on-secondary-fixed": "#022100",
+                        "on-tertiary-fixed-variant": "#74009f",
+                        "on-primary-container": "#006970",
+                        "surface-dim": "#121318",
+                        "on-tertiary-fixed": "#320047",
+                        "secondary-container": "#2ff801",
+                        "inverse-on-surface": "#2f3036",
+                        "primary-fixed-dim": "#00dbe9",
+                        "tertiary-fixed": "#f8d8ff",
+                        "error": "#ffb4ab",
+                        "surface": "#121318",
+                        "surface-container": "#1e1f25",
+                        "tertiary-container": "#f4ccff",
+                        "secondary-fixed-dim": "#2ae500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-desktop": "48px",
+                        "container-max": "1440px",
+                        "margin-mobile": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Space Grotesk"],
+                        "label-md": ["JetBrains Mono"],
+                        "headline-md": ["Space Grotesk"],
+                        "headline-sm": ["Space Grotesk"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-sm": ["Geist"],
+                        "body-md": ["Geist"],
+                        "body-lg": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["42px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.1", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex items-center gap-4">
+<div class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary tracking-tighter uppercase terminal-cursor">
+                SENTINEL.AI
+            </div>
+<div class="hidden md:flex ml-4 px-3 py-1 bg-surface-container-highest rounded border border-outline-variant/50 text-label-sm font-label-sm text-outline">
+<span class="material-symbols-outlined text-[14px] mr-2 text-primary-container">memory</span>
+                Source: Chrome History (Parsed)
+            </div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:block text-label-sm font-label-sm text-secondary-container bg-secondary-container/10 px-2 py-1 rounded border border-secondary-container/30">
+                Connection: SECURE
+            </div>
+<div class="flex gap-2 text-primary dark:text-primary-fixed-dim">
+<button class="p-2 rounded hover:bg-primary/10 dark:hover:bg-primary/10 transition-colors duration-200 cursor-pointer active:opacity-80 transition-all">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+<button class="p-2 rounded hover:bg-primary/10 dark:hover:bg-primary/10 transition-colors duration-200 cursor-pointer active:opacity-80 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded hover:bg-primary/10 dark:hover:bg-primary/10 transition-colors duration-200 cursor-pointer active:opacity-80 transition-all">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+<img alt="Security Analyst Profile" class="w-8 h-8 rounded border border-primary/50" data-alt="A macro shot of a glowing blue fiber optic cable bundle against a pitch black background. The lighting is sharp, creating a high-tech, surveillance aesthetic. It conveys deep digital connectivity and data transfer within a secure network environment, matching a cyber-security visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFk4M1HU709rpfiNoM-Wx8__iAZ_YXTopdh_Vq5WGYQNIh_ya8TnZsuC-Ha5n8272Od1Qhb9P7SIgSPeKfiDLFLBI54lWTuXPimBml74f-aKGo7Je2C_890qrelKh3bQkUtgT_-_CyQVqKwlFaXtgUBepDaEn6KKL1O6Abs-9JLkpiMlGLhEaLUE22vPP8evajcJ8rNacPtszgkucTkNHnT_TxlA5UA-D3tE79EBq4O-xkwJyxG2Rkp4Ooj6sq4rT-f_HtRB0_goUS"/>
+</div>
+</header>
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full flex-col py-6 z-40 bg-surface-container-lowest/90 dark:bg-surface-container-lowest/90 backdrop-blur-2xl docked left-0 h-full w-64 border-r border-outline-variant/30 pt-24">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container/20 rounded flex items-center justify-center border border-primary-container">
+<span class="material-symbols-outlined text-primary-container">security</span>
+</div>
+<div>
+<h2 class="text-headline-md font-headline-md font-black text-primary dark:text-primary tracking-widest text-[20px]">SENTINEL</h2>
+<p class="text-label-md font-label-md text-outline">v2.04.1</p>
+</div>
+</div>
+</div>
+<ul class="flex-1 px-4 space-y-2">
+<!-- Active Tab -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-primary-container dark:text-on-primary-container bg-primary-container/20 border-l-4 border-primary font-bold scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Dashboard</span>
+</a>
+</li>
+<!-- Inactive Tabs -->
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">history_toggle_off</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Timeline</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Audit</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">History</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 transition-transform border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">tune</span>
+<span class="text-label-md font-label-md uppercase tracking-wider">Settings</span>
+</a>
+</li>
+</ul>
+<div class="px-6 mt-auto">
+<button class="w-full py-3 bg-transparent border border-primary text-primary text-label-md font-label-md uppercase tracking-wider hover:bg-primary/10 transition-colors shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+                INJECT DATA
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-20 md:pl-[280px] pr-4 md:pr-8 min-h-screen">
+<div class="mb-6 flex justify-between items-end border-b border-outline-variant/30 pb-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-primary-container">CORE ANALYTICS</h1>
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-widest mt-1">Real-time Behavioral Fingerprint Analysis</p>
+</div>
+<div class="hidden sm:flex items-center gap-2 text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="text-secondary-container">LIVE STREAM</span>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Top Row: Radar & Risk Score -->
+<!-- Left: Behavioral Fingerprint Radar Chart (Col span 8 on lg) -->
+<div class="glass-panel rounded-DEFAULT p-6 lg:col-span-8 relative overflow-hidden flex flex-col min-h-[400px]">
+<div class="scanner-beam"></div>
+<div class="flex justify-between items-center mb-6 z-10">
+<h3 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">radar</span>
+                        Behavioral Fingerprint
+                    </h3>
+<div class="text-label-sm font-label-sm px-2 py-1 bg-surface-container-lowest border border-outline-variant text-outline">
+                        MODALITY: VECTOR
+                    </div>
+</div>
+<div class="flex-1 flex items-center justify-center relative z-10">
+<!-- Conceptual Radar Chart visually constructed -->
+<div class="relative w-64 h-64 md:w-80 md:h-80 radar-grid flex items-center justify-center">
+<!-- Axis Lines -->
+<div class="absolute w-full h-[1px] bg-primary-container/20"></div>
+<div class="absolute h-full w-[1px] bg-primary-container/20"></div>
+<div class="absolute w-full h-[1px] bg-primary-container/20 rotate-45"></div>
+<div class="absolute w-full h-[1px] bg-primary-container/20 -rotate-45"></div>
+<!-- Concentric Rings -->
+<div class="absolute w-3/4 h-3/4 rounded-full border border-primary-container/20"></div>
+<div class="absolute w-2/4 h-2/4 rounded-full border border-primary-container/20"></div>
+<div class="absolute w-1/4 h-1/4 rounded-full border border-primary-container/20"></div>
+<!-- Data Polygon shape using SVG for precision -->
+<svg class="absolute inset-0 w-full h-full" viewbox="0 0 100 100">
+<polygon fill="rgba(0, 240, 255, 0.15)" points="50,10 80,30 90,70 60,90 20,80 15,40" stroke="#00f0ff" stroke-width="1.5" style="filter: drop-shadow(0 0 4px rgba(0,240,255,0.5));"></polygon>
+<!-- Data Points -->
+<circle cx="50" cy="10" fill="#fff" r="2"></circle>
+<circle cx="80" cy="30" fill="#fff" r="2"></circle>
+<circle cx="90" cy="70" fill="#fff" r="2"></circle>
+<circle cx="60" cy="90" fill="#fff" r="2"></circle>
+<circle cx="20" cy="80" fill="#fff" r="2"></circle>
+<circle cx="15" cy="40" fill="#fff" r="2"></circle>
+</svg>
+<!-- Labels -->
+<div class="absolute -top-6 text-label-sm font-label-sm text-primary-container">COMMERCE</div>
+<div class="absolute -bottom-6 text-label-sm font-label-sm text-primary-container">SOCIAL</div>
+<div class="absolute -left-12 text-label-sm font-label-sm text-primary-container">WORK</div>
+<div class="absolute -right-14 text-label-sm font-label-sm text-primary-container">RESEARCH</div>
+</div>
+</div>
+</div>
+<!-- Right: Privacy Risk Score (Col span 4 on lg) -->
+<div class="glass-panel rounded-DEFAULT p-6 lg:col-span-4 relative flex flex-col border-t-tertiary-fixed-dim/40 border-l-tertiary-fixed-dim/20">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-headline-sm font-headline-sm text-tertiary-container flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">warning</span>
+                        Privacy Risk Score
+                    </h3>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center">
+<!-- Gauge Concept -->
+<div class="relative w-48 h-48 mb-4">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background Track -->
+<circle cx="50" cy="50" fill="none" r="45" stroke="#292a2f" stroke-width="8"></circle>
+<!-- Score Track (Electric Purple) -->
+<circle cx="50" cy="50" fill="none" r="45" stroke="#ebb2ff" stroke-dasharray="283" stroke-dashoffset="60" stroke-linecap="round" stroke-width="8" style="filter: drop-shadow(0 0 8px rgba(235,178,255,0.6));"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-[48px] font-headline-lg font-bold text-tertiary-fixed-dim leading-none">78</span>
+<span class="text-label-sm font-label-sm text-outline mt-1">/ 100</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-highest p-3 border border-outline-variant/50 rounded flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed-dim mt-0.5">policy</span>
+<div>
+<div class="text-label-sm font-label-sm text-tertiary-fixed-dim uppercase tracking-wider mb-1">Status: Elevated</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">Unusual cluster of cross-site tracking detected in past 4 hours.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Row Grid -->
+<!-- Bottom Left: Top 5 Visited (Col span 4) -->
+<div class="glass-panel rounded-DEFAULT p-5 lg:col-span-4 flex flex-col min-h-[300px]">
+<h3 class="text-label-md font-label-md text-primary-container uppercase tracking-wider mb-6 pb-2 border-b border-outline-variant/30 flex justify-between">
+<span>Top Domains</span>
+<span class="text-outline">VOL</span>
+</h3>
+<div class="flex-1 flex flex-col justify-between gap-4">
+<!-- Bar 1 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface font-mono">github.com</span>
+<span class="text-primary-container">142</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest">
+<div class="h-full bg-primary-container w-[85%] shadow-[0_0_5px_rgba(0,240,255,0.5)]"></div>
+</div>
+</div>
+<!-- Bar 2 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface font-mono">stackoverflow.com</span>
+<span class="text-primary-container">98</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest">
+<div class="h-full bg-primary-container/80 w-[60%]"></div>
+</div>
+</div>
+<!-- Bar 3 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface font-mono">aws.amazon.com</span>
+<span class="text-primary-container">76</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest">
+<div class="h-full bg-primary-container/60 w-[45%]"></div>
+</div>
+</div>
+<!-- Bar 4 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface font-mono">news.ycombinator.com</span>
+<span class="text-primary-container">45</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest">
+<div class="h-full bg-primary-container/40 w-[25%]"></div>
+</div>
+</div>
+<!-- Bar 5 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface font-mono">mail.google.com</span>
+<span class="text-primary-container">31</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest">
+<div class="h-full bg-primary-container/20 w-[15%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Middle: Activity Heatmap (Col span 4) -->
+<div class="glass-panel rounded-DEFAULT p-5 lg:col-span-4 flex flex-col min-h-[300px]">
+<h3 class="text-label-md font-label-md text-primary-container uppercase tracking-wider mb-4 pb-2 border-b border-outline-variant/30 flex justify-between">
+<span>Activity Matrix</span>
+<span class="text-outline">T-24H</span>
+</h3>
+<div class="flex-1 flex items-center justify-center">
+<!-- Conceptual Heatmap Grid -->
+<div class="grid grid-cols-6 gap-1 w-full">
+<!-- Row 1 -->
+<div class="aspect-square bg-primary-container/10 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
+<div class="aspect-square bg-primary-container/5 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
+<div class="aspect-square bg-primary-container/40 heatmap-cell hover:bg-primary-container/60 transition-colors"></div>
+<!-- Row 2 -->
+<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
+<div class="aspect-square bg-primary-container/10 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-primary-container/60 heatmap-cell hover:bg-primary-container/80 transition-colors border-primary-container/50"></div>
+<div class="aspect-square bg-primary-container/80 heatmap-cell hover:bg-primary-container shadow-[0_0_8px_rgba(0,240,255,0.4)] border-primary-container"></div>
+<!-- Row 3 -->
+<div class="aspect-square bg-primary-container/5 heatmap-cell hover:bg-primary-container/20 transition-colors"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-primary-container/10 heatmap-cell hover:bg-primary-container/30 transition-colors"></div>
+<div class="aspect-square bg-primary-container/40 heatmap-cell hover:bg-primary-container/60 transition-colors"></div>
+<div class="aspect-square bg-primary-container/60 heatmap-cell hover:bg-primary-container/80 transition-colors"></div>
+<!-- Row 4 -->
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-surface-container-highest heatmap-cell"></div>
+<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
+<div class="aspect-square bg-primary-container/30 heatmap-cell hover:bg-primary-container/50 transition-colors"></div>
+<div class="aspect-square bg-primary-container/20 heatmap-cell hover:bg-primary-container/40 transition-colors"></div>
+</div>
+</div>
+<div class="mt-4 flex justify-between text-label-sm font-label-sm text-outline">
+<span>00:00</span>
+<span>Intensity</span>
+<span>24:00</span>
+</div>
+</div>
+<!-- Bottom Right: Category Breakdown (Col span 4) -->
+<div class="glass-panel rounded-DEFAULT p-5 lg:col-span-4 flex flex-col min-h-[300px]">
+<h3 class="text-label-md font-label-md text-primary-container uppercase tracking-wider mb-4 pb-2 border-b border-outline-variant/30 flex justify-between">
+<span>Category Vector</span>
+<span class="text-outline">%</span>
+</h3>
+<div class="flex-1 flex items-center justify-between gap-4">
+<!-- Donut Chart Concept -->
+<div class="relative w-32 h-32 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Segment 1 (Dev) -->
+<circle cx="50" cy="50" fill="none" r="40" stroke="#00f0ff" stroke-dasharray="251" stroke-dashoffset="75" stroke-width="12"></circle>
+<!-- Segment 2 (Social) -->
+<circle cx="50" cy="50" fill="none" r="40" stroke="#ebb2ff" stroke-dasharray="251" stroke-dashoffset="180" stroke-dashoffset-start="75" stroke-width="12" style="transform-origin: center; transform: rotate(100deg);"></circle>
+<!-- Segment 3 (Other) -->
+<circle cx="50" cy="50" fill="none" r="40" stroke="#3b494b" stroke-dasharray="251" stroke-dashoffset="200" stroke-width="12" style="transform-origin: center; transform: rotate(240deg);"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">data_usage</span>
+</div>
+</div>
+<!-- Legend -->
+<div class="flex-1 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-label-sm font-label-sm">
+<span class="w-3 h-3 bg-primary-container border border-primary"></span>
+<span class="text-on-surface">DEVELOPMENT</span>
+</div>
+<span class="text-primary-container font-mono text-label-sm">45%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-label-sm font-label-sm">
+<span class="w-3 h-3 bg-tertiary-fixed-dim border border-tertiary"></span>
+<span class="text-on-surface">SOCIAL/COMM</span>
+</div>
+<span class="text-tertiary-fixed-dim font-mono text-label-sm">35%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-label-sm font-label-sm">
+<span class="w-3 h-3 bg-outline-variant border border-outline"></span>
+<span class="text-on-surface">UTILITY/OTHER</span>
+</div>
+<span class="text-outline font-mono text-label-sm">20%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    document.querySelectorAll('a').forEach(a => {
+        if (a.textContent.includes('Dashboard')) a.href = 'dashboard.html';
+        if (a.textContent.includes('Audit')) a.href = 'upload.html';
+    });
+
+    // We can inject mock data directly into the DOM elements here to make it look alive
+    document.querySelector('.text-error').textContent = Math.floor(Math.random() * 40 + 50); // Random score 50-90
+</script>
+</body></html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SENTINEL.AI - Decode Your Digital Shadow</title>
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Space+Grotesk:wght@600;700;900&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-container": "#0f6d00",
+                        "outline": "#849495",
+                        "secondary": "#d7ffc5",
+                        "surface-container-low": "#1a1b21",
+                        "on-primary": "#00363a",
+                        "on-error-container": "#ffdad6",
+                        "surface-bright": "#38393f",
+                        "inverse-primary": "#006970",
+                        "on-surface": "#e3e1e9",
+                        "inverse-surface": "#e3e1e9",
+                        "primary-fixed": "#7df4ff",
+                        "tertiary-fixed-dim": "#ebb2ff",
+                        "on-secondary": "#053900",
+                        "primary": "#dbfcff",
+                        "outline-variant": "#3b494b",
+                        "on-primary-fixed": "#002022",
+                        "on-tertiary-container": "#9900d1",
+                        "tertiary": "#fff2fe",
+                        "on-background": "#e3e1e9",
+                        "primary-container": "#00f0ff",
+                        "surface-container-high": "#292a2f",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#34343a",
+                        "surface-variant": "#34343a",
+                        "surface-container-lowest": "#0d0e13",
+                        "on-secondary-fixed-variant": "#095300",
+                        "secondary-fixed": "#79ff5b",
+                        "on-error": "#690005",
+                        "background": "#121318",
+                        "on-surface-variant": "#b9cacb",
+                        "on-tertiary": "#520072",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-tint": "#00dbe9",
+                        "on-secondary-fixed": "#022100",
+                        "on-tertiary-fixed-variant": "#74009f",
+                        "on-primary-container": "#006970",
+                        "surface-dim": "#121318",
+                        "on-tertiary-fixed": "#320047",
+                        "secondary-container": "#2ff801",
+                        "inverse-on-surface": "#2f3036",
+                        "primary-fixed-dim": "#00dbe9",
+                        "tertiary-fixed": "#f8d8ff",
+                        "error": "#ffb4ab",
+                        "surface": "#121318",
+                        "surface-container": "#1e1f25",
+                        "tertiary-container": "#f4ccff",
+                        "secondary-fixed-dim": "#2ae500"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        gutter: "16px",
+                        "margin-desktop": "48px",
+                        "container-max": "1440px",
+                        "margin-mobile": "16px",
+                        unit: "4px"
+                    },
+                    fontFamily: {
+                        "headline-lg": ["Space Grotesk"],
+                        "label-md": ["JetBrains Mono"],
+                        "headline-md": ["Space Grotesk"],
+                        "headline-sm": ["Space Grotesk"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-sm": ["Geist"],
+                        "body-md": ["Geist"],
+                        "body-lg": ["Geist"]
+                    },
+                    fontSize: {
+                        "headline-lg": ["42px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "label-md": ["14px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "headline-md": ["28px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "headline-sm": ["20px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "label-sm": ["12px", { lineHeight: "1", letterSpacing: "0.1em", fontWeight: "500" }],
+                        "headline-lg-mobile": ["32px", { lineHeight: "1.1", fontWeight: "700" }],
+                        "body-sm": ["14px", { lineHeight: "1.4", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 73, 75, 0.3);
+            border-top-color: rgba(219, 252, 255, 0.2);
+        }
+        .glow-border:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+        .scanline {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px;
+        }
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background-color: #dbfcff;
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 4px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar (Linear/Transactional context - Simplified or Hidden depending on exact interpretation, but adding basic header as it's a landing page) -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex items-center gap-4">
+<span class="text-headline-sm font-headline-sm font-bold text-primary tracking-tighter uppercase">SENTINEL.AI</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-label-sm font-label-sm text-secondary-fixed font-bold tracking-widest hidden md:inline-block border border-secondary-fixed/30 px-3 py-1 rounded-none bg-secondary-fixed/5">CONNECTION: SECURE</span>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-colors uppercase">Get Started</button>
+</div>
+</header>
+<main class="flex-grow pt-16">
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center justify-center px-gutter py-24 overflow-hidden border-b border-outline-variant/30">
+<!-- Background Visual -->
+<div class="absolute inset-0 z-0 opacity-40">
+<div class="absolute inset-0 bg-background mix-blend-multiply z-10"></div>
+<img alt="Digital Fingerprint" class="w-full h-full object-cover" data-alt="A highly complex, stylized digital fingerprint glowing with intense cyan and neon blue light against an abyss of deep black. The fingerprint is composed of intricate binary data streams and sharp geometric nodes, resembling a high-tech scanner visualization. The lighting is harsh and synthetic, creating a pure dark-mode, cyberpunk aesthetic suitable for advanced cybersecurity analytics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnga5iYKJn9GgfNYUJlym2TNXPqBS7L3u11RE98Q6rKWpoqNs3EGYb2N-D6-YrxjoTWsj56d32ucb_BlvaObjQ7TazOKcrOh4yfIHuiGQys8RMRzG5l133MIpfLm3lg8i7NF1DIaopJoIvVeB3NL0YhMlmYDIGqReVY0_akomf3l8Cs7yvHiwCrBkz8wBho_SkF9UE8mFeCV_z7scI41R0lZTraRDnrnFjxvRhtLuhiJ2d0er2PVbTYLZ45CAyP2M5kq0Z62Grx5wk"/>
+</div>
+<!-- Content -->
+<div class="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
+<div class="inline-flex items-center gap-2 border border-outline-variant px-3 py-1 bg-surface-container/50 backdrop-blur-md">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Local-First Behavioral Analytics</span>
+</div>
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg text-primary tracking-tighter uppercase leading-none drop-shadow-lg">
+                    Decode Your<br/>Digital Shadow<span class="terminal-cursor"></span>
+</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl text-center">
+                    Uncover invisible data trails with absolute precision. Our zero-knowledge engine analyzes your digital footprint entirely on your machine. No cloud uploads. Total operational security.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-8 py-4 border border-primary hover:bg-primary-container transition-colors uppercase tracking-widest relative overflow-hidden group">
+<span class="relative z-10">Initiate Scan</span>
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+</button>
+<button class="bg-surface/50 text-primary font-label-md text-label-md px-8 py-4 border border-outline-variant hover:border-primary glow-border transition-colors uppercase tracking-widest backdrop-blur-md">
+                        View Documentation
+                    </button>
+</div>
+</div>
+<!-- Decorative grid overlay -->
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgNzMsIDc1LCAwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20 pointer-events-none"></div>
+</section>
+<!-- How It Works (Bento Grid) -->
+<section class="py-24 px-gutter max-w-container-max mx-auto border-b border-outline-variant/30">
+<div class="mb-16">
+<h2 class="text-headline-md font-headline-md text-primary uppercase tracking-tighter">Execution Protocol</h2>
+<p class="text-body-md text-on-surface-variant font-label-md mt-2">SYS_SEQ // THREE_PHASE_ANALYSIS</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Step 1: Upload -->
+<div class="glass-panel p-8 flex flex-col gap-6 relative overflow-hidden group hover:border-primary transition-colors duration-300">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary-container to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 bg-surface border border-outline-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">upload_file</span>
+</div>
+<span class="text-label-md font-label-md text-outline-variant">01</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface uppercase mb-2">Ingest Data</h3>
+<p class="text-body-sm text-on-surface-variant">Feed raw telemetry, browser history, or communication logs into the isolated sandbox environment.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant/30">
+<span class="text-label-sm font-label-sm text-secondary-fixed font-bold">STATUS: READY FOR INPUT</span>
+</div>
+</div>
+<!-- Step 2: Analyze -->
+<div class="glass-panel p-8 flex flex-col gap-6 relative overflow-hidden group hover:border-primary transition-colors duration-300 md:translate-y-8">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-tertiary-container to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 bg-surface border border-outline-variant flex items-center justify-center text-tertiary-fixed-dim">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">troubleshoot</span>
+</div>
+<span class="text-label-md font-label-md text-outline-variant">02</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface uppercase mb-2">Parse &amp; Correlate</h3>
+<p class="text-body-sm text-on-surface-variant">Proprietary algorithms cross-reference data points to map your external exposure and identify vulnerable linkages.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant/30 flex gap-2">
+<span class="px-2 py-1 bg-tertiary/10 border border-tertiary-fixed-dim/30 text-tertiary-fixed-dim text-label-sm font-label-sm">DEEP SCAN</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant/30 text-on-surface-variant text-label-sm font-label-sm">LOCAL ONLY</span>
+</div>
+</div>
+<!-- Step 3: Protect -->
+<div class="glass-panel p-8 flex flex-col gap-6 relative overflow-hidden group hover:border-primary transition-colors duration-300">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary-fixed to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 bg-surface border border-outline-variant flex items-center justify-center text-secondary-fixed">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+</div>
+<span class="text-label-md font-label-md text-outline-variant">03</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface uppercase mb-2">Neutralize Threats</h3>
+<p class="text-body-sm text-on-surface-variant">Generate actionable mitigation protocols. Erase identified footprints and fortify your perimeter against future extraction.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant/30">
+<span class="text-label-sm font-label-sm text-primary font-bold">OUTPUT: SECURE</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant/30 py-12 px-gutter mt-auto">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+<div class="flex flex-col gap-2">
+<span class="text-headline-sm font-headline-sm font-bold text-primary tracking-tighter uppercase">SENTINEL.AI</span>
+<span class="text-label-sm font-label-sm text-outline">v2.04.1 // DEPLOYMENT ACTIVE</span>
+</div>
+<div class="flex gap-8">
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors uppercase" href="#">Documentation</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors uppercase" href="#">Privacy Policy</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors uppercase" href="#">Terms</a>
+</div>
+</div>
+</footer>
+<script>
+    document.querySelectorAll('a, button').forEach(el => {
+        if (el.textContent.includes('Get Started') || el.textContent.includes('Initiate Scan')) {
+            if (el.tagName === 'A') el.href = 'upload.html';
+            else el.onclick = () => window.location.href = 'upload.html';
+        }
+    });
+</script>
+</body></html>

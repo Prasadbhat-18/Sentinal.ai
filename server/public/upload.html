@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SENTINEL.AI - Data Intake</title>
+<link rel="stylesheet" href="styles.css">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#0f6d00",
+                        "outline": "#849495",
+                        "secondary": "#d7ffc5",
+                        "surface-container-low": "#1a1b21",
+                        "on-primary": "#00363a",
+                        "on-error-container": "#ffdad6",
+                        "surface-bright": "#38393f",
+                        "inverse-primary": "#006970",
+                        "on-surface": "#e3e1e9",
+                        "inverse-surface": "#e3e1e9",
+                        "primary-fixed": "#7df4ff",
+                        "tertiary-fixed-dim": "#ebb2ff",
+                        "on-secondary": "#053900",
+                        "primary": "#dbfcff",
+                        "outline-variant": "#3b494b",
+                        "on-primary-fixed": "#002022",
+                        "on-tertiary-container": "#9900d1",
+                        "tertiary": "#fff2fe",
+                        "on-background": "#e3e1e9",
+                        "primary-container": "#00f0ff",
+                        "surface-container-high": "#292a2f",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#34343a",
+                        "surface-variant": "#34343a",
+                        "surface-container-lowest": "#0d0e13",
+                        "on-secondary-fixed-variant": "#095300",
+                        "secondary-fixed": "#79ff5b",
+                        "on-error": "#690005",
+                        "background": "#121318",
+                        "on-surface-variant": "#b9cacb",
+                        "on-tertiary": "#520072",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-tint": "#00dbe9",
+                        "on-secondary-fixed": "#022100",
+                        "on-tertiary-fixed-variant": "#74009f",
+                        "on-primary-container": "#006970",
+                        "surface-dim": "#121318",
+                        "on-tertiary-fixed": "#320047",
+                        "secondary-container": "#2ff801",
+                        "inverse-on-surface": "#2f3036",
+                        "primary-fixed-dim": "#00dbe9",
+                        "tertiary-fixed": "#f8d8ff",
+                        "error": "#ffb4ab",
+                        "surface": "#121318",
+                        "surface-container": "#1e1f25",
+                        "tertiary-container": "#f4ccff",
+                        "secondary-fixed-dim": "#2ae500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-desktop": "48px",
+                        "container-max": "1440px",
+                        "margin-mobile": "16px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Space Grotesk", "sans-serif"],
+                        "label-md": ["JetBrains Mono", "monospace"],
+                        "headline-md": ["Space Grotesk", "sans-serif"],
+                        "headline-sm": ["Space Grotesk", "sans-serif"],
+                        "label-sm": ["JetBrains Mono", "monospace"],
+                        "headline-lg-mobile": ["Space Grotesk", "sans-serif"],
+                        "body-sm": ["Geist", "sans-serif"],
+                        "body-md": ["Geist", "sans-serif"],
+                        "body-lg": ["Geist", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["42px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-md": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400&amp;family=JetBrains+Mono:wght@500&amp;family=Space+Grotesk:wght@600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { background-color: #050608; } /* Deepest base layer */
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        /* Hide scrollbar for clean analytical look */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3b494b; border-radius: 0; }
+        ::-webkit-scrollbar-thumb:hover { background: #849495; }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex h-screen overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- JSON Component: SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-surface-container-lowest/90 dark:bg-surface-container-lowest/90 backdrop-blur-2xl border-r border-outline-variant/30 w-64">
+<!-- Header -->
+<div class="px-6 mb-8 flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<span aria-label="System Logo" class="material-symbols-outlined text-primary text-3xl">security</span>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-black text-primary dark:text-primary tracking-widest">SENTINEL</span>
+<span class="text-label-sm font-label-sm text-outline tracking-widest uppercase">v2.04.1</span>
+</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="flex flex-col flex-1 px-4 gap-2">
+<!-- Dashboard (Inactive) -->
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+                    Dashboard
+                </a>
+</li>
+<!-- Timeline (Inactive) -->
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
+<span class="material-symbols-outlined">history_toggle_off</span>
+                    Timeline
+                </a>
+</li>
+<!-- Audit (Active - Mapped conceptually to Data Upload/Inspection) -->
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-primary-container dark:text-on-primary-container bg-primary-container/20 border-l-4 border-primary font-bold uppercase" href="#">
+<span class="material-symbols-outlined">security</span>
+                    Audit
+                </a>
+</li>
+<!-- History (Inactive) -->
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
+<span class="material-symbols-outlined">database</span>
+                    History
+                </a>
+</li>
+<!-- Settings (Inactive) -->
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-label-md font-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-all duration-150 scale-95 active:scale-90 uppercase" href="#">
+<span class="material-symbols-outlined">tune</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<!-- CTA -->
+<div class="px-6 mt-auto">
+<button class="w-full py-3 border border-primary text-primary text-label-md font-label-md uppercase tracking-widest hover:bg-primary/10 transition-colors duration-200">
+                INJECT DATA
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 h-full overflow-y-auto p-margin-desktop bg-surface/30 relative">
+<!-- Scanline overlay effect for structural depth without shadows -->
+<div class="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,#ffffff_50%)] bg-[length:100%_4px] z-0"></div>
+<div class="max-w-4xl mx-auto relative z-10 flex flex-col gap-12">
+<!-- Page Header -->
+<header class="flex flex-col gap-2">
+<h1 class="text-headline-lg font-headline-lg text-primary tracking-tighter uppercase">Data Intake Sequence</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">Initialize secure localized ingestion of raw telemetry logs. Establish source parameters for deep analysis.</p>
+</header>
+<!-- Progress Stepper (Terminal Style) -->
+<div class="flex items-center w-full gap-2 border border-outline-variant/30 p-2 bg-surface-container-low/50 glass-panel">
+<!-- Step 1: Completed -->
+<div class="flex-1 h-2 bg-primary/30 flex items-center relative">
+<div class="absolute w-full h-full bg-primary/20"></div>
+<div class="w-full h-full border-b-2 border-primary"></div>
+<span class="absolute -top-6 text-label-sm font-label-sm text-outline uppercase left-0">01. Authenticate</span>
+</div>
+<!-- Step 2: Active -->
+<div class="flex-1 h-2 bg-primary flex items-center relative shadow-[0_0_8px_rgba(0,240,255,0.4)]">
+<span class="absolute -top-6 text-label-sm font-label-sm text-primary font-bold uppercase left-0">02. Ready to Parse</span>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex-1 h-2 bg-surface-container-highest flex items-center relative">
+<span class="absolute -top-6 text-label-sm font-label-sm text-outline-variant uppercase left-0">03. Audit Protocol</span>
+</div>
+</div>
+<!-- Main Interactive Zone: Drag & Drop -->
+<div class="relative group cursor-pointer">
+<!-- Glass panel background -->
+<div class="absolute inset-0 bg-surface-container-low/60 glass-panel border-t border-outline-variant/80 border-x border-b border-outline-variant/30 group-hover:border-primary/60 transition-colors duration-300"></div>
+<!-- Content -->
+<div class="relative z-10 p-16 flex flex-col items-center justify-center text-center gap-6 min-h-[400px] border border-dashed border-transparent group-hover:border-primary/40 m-4 transition-all duration-300">
+<div class="w-20 h-20 rounded-none bg-surface-container-high border border-outline-variant/50 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/50 transition-colors duration-300 mb-4">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors duration-300">data_exploration</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors duration-300">Drop Your History</h2>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-md">
+                        Drag and drop raw telemetry files into this sector or click to browse local directories.
+                    </p>
+<div class="flex items-center gap-3 mt-4">
+<span class="text-label-sm font-label-sm text-outline uppercase tracking-widest">Supported Protocols:</span>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-highest border border-outline-variant/50 text-label-sm font-label-sm text-on-surface uppercase">Chrome History JSON</span>
+<span class="px-2 py-1 bg-surface-container-highest border border-outline-variant/50 text-label-sm font-label-sm text-on-surface uppercase">Google Takeout</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Lower Section: Security Badge & Action -->
+<div class="flex items-center justify-between mt-8 border-t border-outline-variant/30 pt-8">
+<!-- Security Trust Badge -->
+<div class="flex items-center gap-4 px-4 py-3 bg-surface-container-low border border-outline-variant/40 max-w-md">
+<span class="material-symbols-outlined text-secondary text-xl">gpp_good</span>
+<div>
+<h4 class="text-label-md font-label-md text-on-surface uppercase mb-1">Zero-Retention Policy</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Why we don't store your raw logs: Analysis is performed locally in-memory. Data evaporates upon session termination.</p>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="bg-primary text-on-primary px-8 py-4 text-label-md font-label-md uppercase tracking-widest border border-primary hover:bg-primary-fixed transition-colors duration-200 flex items-center gap-3">
+                    Initialize Analysis
+                    <span class="material-symbols-outlined text-lg">arrow_forward_ios</span>
+</button>
+</div>
+</div>
+</main>
+<input type="file" id="fileInput" style="display: none;" accept=".json,.csv" />
+<script>
+    // Navigation
+    document.querySelectorAll('a').forEach(a => {
+        if (a.textContent.includes('Dashboard')) a.href = 'dashboard.html';
+    });
+
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.querySelector('.group.cursor-pointer');
+    const uploadBtn = document.querySelector('button.bg-primary');
+    
+    // Auto-login mock since we removed react (create dummy token/user if not exist)
+    localStorage.setItem('token', 'mock-token-for-static-demo');
+
+    dropZone.onclick = () => fileInput.click();
+
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            document.querySelector('h2').textContent = file.name;
+            document.querySelector('.group.cursor-pointer p').textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+        }
+    };
+
+    uploadBtn.onclick = async () => {
+        if (!fileInput.files[0]) return alert("Please select a file first");
+        uploadBtn.textContent = "PROCESSING...";
+        // Simulate upload for the UI demo as requested
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 1500);
+    };
+</script>
+</body></html>

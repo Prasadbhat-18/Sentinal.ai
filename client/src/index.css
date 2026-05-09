@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+  
+  code, pre {
+    @apply font-mono;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 shadow-lg rounded-none;
+  }
+  
+  .glass-panel-active {
+    @apply bg-surface-container-highest/80 backdrop-blur-2xl border-primary/40 shadow-[0_0_15px_rgba(0,240,255,0.15)] rounded-none;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-on-primary px-6 py-2 font-mono uppercase tracking-widest text-sm hover:bg-primary-container transition-colors duration-300 border border-transparent;
+  }
+  
+  .btn-secondary {
+    @apply bg-transparent text-primary px-6 py-2 font-mono uppercase tracking-widest text-sm border border-primary/50 hover:border-primary hover:shadow-[0_0_10px_rgba(0,240,255,0.2)] transition-all duration-300;
+  }
+  
+  .input-terminal {
+    @apply bg-surface-container-lowest border border-outline-variant/50 text-on-surface px-4 py-3 font-mono text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all rounded-none w-full;
+  }
+}
